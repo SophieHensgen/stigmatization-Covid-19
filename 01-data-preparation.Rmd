@@ -1,0 +1,514 @@
+---
+title: "Data Preparation"
+author: "Sophie Hensgen"
+date: "5/12/2021"
+output: html_document
+---
+
+```{r packages, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+```
+
+## Aufbereitung
+
+
+```{r Datensatz reinladen}
+
+df_origin <- read_csv("stigma-origin-df.csv")
+df_origin_nolab <- read_csv("stigma-origin-df-nolabel.csv")
+
+```
+
+```{r Impression}
+
+head(df_origin)
+head(df_origin_nolab)
+```
+
+```{r Aufbereitung df_origin, echo=FALSE}
+
+# select variables, which I need for the analysis.
+
+df_label <- df_origin %>%
+  select(c_0003, c_0004, c_0005, c_0006, v_19, v_258, v_42, v_21, v_23, v_24, v_25, v_28, v_30, v_31, v_32, v_33, v_34, v_35, v_37, v_38, v_39, v_36, v_153,v_154,v_155, v_156, v_157, v_158, v_181, v_182,v_183, v_184, v_185, v_186, v_187, v_188, v_189, v_190, v_191, v_192, v_193, v_194, v_195, v_196, v_197, v_198, v_177, v_180, v_178, v_179, v_11, v_12, v_13, v_14, v_15, v_16, v_86, v_87, v_88, v_17, v_248, v_199, v_250, v_246)
+
+# assign column names
+
+colnames(df_label) <- c("v1", "v2", "v3", "v4", "sex", "age", "land", "school", "beruf_anlernzeit", "beruf_teilfacharbeiterabschluss","beruf_abgeschlossene_lehre", "beruf_fachschulabschluss","beruf_meister_techniker", "beruf_fachhochschulabschluss","beruf_hochschulabschluss", "beruf_andere_ausbildung","beruf_andere_ausbildung_o","beruf_keine", "staatsangehörigkeit_deutsch", "staatsangehörigkeit_eu","staatsangehörigkeit_nicht_eu","geburtsort", "v1_nachbar", "v1_heirat", "v1_arbeit", "v1_essen", "v1_freund", "v1_kinder", "v2_nachbar", "v2_heirat", "v2_arbeit", "v2_essen", "v2_freund", "v2_kinder", "v3_nachbar", "v3_heirat", "v3_arbeit", "v3_essen", "v3_freund", "v3_kinder", "v4_nachbar", "v4_heirat", "v4_arbeit", "v4_essen", "v4_freund", "v4_kinder", "eigene_finanzen", "eigene_gesundheit", "andere_gesundheit", "wirtschaftliche_lage", "em_schule", "em_kontakt", "em_freizeit", "em_reisen", "em_profisport", "em_bars", "em_mp_freien", "em_mp_person", "em_keine", "einhaltung_maßnahmen", "infektion", "impfung", "impfbereitschaft", "politik")
+
+
+head(df_label)
+
+```
+```{r Aufbereitung df_origin_nolab, echo=FALSE}
+
+# select variables, which I need for the analysis.
+
+df_nolab <- df_origin_nolab %>%
+  select(c_0003, c_0004, c_0005, c_0006, v_19, v_258, v_42, v_21, v_23, v_24, v_25, v_28, v_30, v_31, v_32, v_33, v_34, v_35, v_37, v_38, v_39, v_36, v_153,v_154,v_155, v_156, v_157, v_158, v_181, v_182,v_183, v_184, v_185, v_186, v_187, v_188, v_189, v_190, v_191, v_192, v_193, v_194, v_195, v_196, v_197, v_198, v_177, v_180, v_178, v_179, v_11, v_12, v_13, v_14, v_15, v_16, v_86, v_87, v_88, v_17, v_248, v_199, v_250, v_246)
+
+# assign column names
+
+colnames(df_nolab) <- c("v1", "v2", "v3", "v4", "sex", "age", "land", "school", "beruf_anlernzeit", "beruf_teilfacharbeiterabschluss","beruf_abgeschlossene_lehre", "beruf_fachschulabschluss","beruf_meister_techniker", "beruf_fachhochschulabschluss","beruf_hochschulabschluss", "beruf_andere_ausbildung","beruf_andere_ausbildung_o","beruf_keine", "staatsangehörigkeit_deutsch", "staatsangehörigkeit_eu","staatsangehörigkeit_nicht_eu","geburtsort", "v1_nachbar", "v1_heirat", "v1_arbeit", "v1_essen", "v1_freund", "v1_kinder", "v2_nachbar", "v2_heirat", "v2_arbeit", "v2_essen", "v2_freund", "v2_kinder", "v3_nachbar", "v3_heirat", "v3_arbeit", "v3_essen", "v3_freund", "v3_kinder", "v4_nachbar", "v4_heirat", "v4_arbeit", "v4_essen", "v4_freund", "v4_kinder", "eigene_finanzen", "eigene_gesundheit", "andere_gesundheit", "wirtschaftliche_lage", "em_schule", "em_kontakt", "em_freizeit", "em_reisen", "em_profisport", "em_bars", "em_mp_freien", "em_mp_person", "em_keine", "einhaltung_maßnahmen", "infektion", "impfung", "impfbereitschaft", "politik")
+
+
+head(df_nolab)
+
+```
+
+
+###########################################################################################################################################
+##                                                                                                                                       ##
+##                                    Control, for distribution of vignettes                                                             ##
+##                                                                                                                                       ##
+###########################################################################################################################################
+
+```{r Kontrolle v1 - v4, echo=FALSE}
+
+# v1
+
+count1 <- count(df_label, v1) # count how often one vignette appeared
+count1 <- count1[-1,] # deleting missings
+summary(count1$n) # summary
+
+hist(count1$n) # descriptive graph
+
+# v2
+
+count2 <- count(df_label, v2) # count how often one vignette appeared
+count2 <- count2[-1,] # deleting missings
+summary(count2$n) # summary
+
+hist(count2$n) # descriptive graph
+
+# v3
+
+count3 <- count(df_label, v3) # count how often one vignette appeared
+count3 <- count3[-1,] # deleting missings
+summary(count3$n) # summary
+
+hist(count3$n) # descriptive graph
+
+# v4
+
+count4 <- count(df_label, v4) # count how often one vignette appeared
+count4 <- count4[-1,] # deleting missings
+summary(count4$n) # summary
+
+hist(count4$n) # descriptive graph
+```
+
+
+```{r Kontrolle zusammen, echo=FALSE}
+
+dftg <- df_label%>% 
+  select(v1, v2, v3, v4)
+
+df_long <- data.frame(v1 = unlist(dftg, use.names = FALSE))
+
+count_long <- count(df_long, v1)
+count5 <- count_long[-1,] # deleting missings
+summary(count5$n) # summary
+
+hist(count5$n) # descriptive graph
+```
+###########################################################################################################################################
+##                                                                                                                                       ##
+##                                                 Data Frame Preparation                                                                ##
+##                                                                                                                                       ##
+###########################################################################################################################################
+
+```{r Creating new Variables - First Vignette}
+
+df_prep <- df_nolab
+
+### Gender of fictional Character
+
+# 1 = women
+# 0 = men
+
+df_prep <- df_prep %>%
+  mutate(sex_v1 = ifelse(grepl("Nina", dftg$v1), 1,
+                      ifelse(grepl("Elif", dftg$v1), 1,
+                             ifelse(grepl("Li-Ming", dftg$v1), 1, 0))))
+
+### Ethnicity
+
+# 1 = German
+# 2 = Turkish
+# 3 = Asian
+
+df_prep <- df_prep %>%
+  mutate(ethnicity_v1 = ifelse(grepl("M\xfcller", dftg$v1), 1,
+                            ifelse(grepl("Ceylan", dftg$v1), 2, 3)))
+
+### Ethnicity
+
+# 22 = 22 years old
+# 43 = 43 years old
+# 64 = 64 years old
+
+df_prep <- df_prep %>%
+  mutate(age_v1 = ifelse(grepl("22", dftg$v1), 22,
+                            ifelse(grepl("43", dftg$v1), 43, 64)))
+
+### Occupation
+
+# 1 = Nurse
+# 2 = Cashier
+# 3 = Administrative
+
+df_prep <- df_prep %>%
+  mutate(occupation_v1 = ifelse(grepl("Krankenhaus", dftg$v1), 1,
+                            ifelse(grepl("Supermarkt", dftg$v1), 2, 3)))
+
+### Occupation
+
+# 1 = Non-Essential Worker
+# 0 = Essential worker
+
+df_prep <- df_prep %>%
+  mutate(essential_v1 = ifelse(grepl("Home Office", dftg$v1), 1, 0))
+
+### Covid-19
+
+# 1 = Currently infected
+# 2 = Former infected
+# 3 = not mentioned
+
+df_prep <- df_prep %>%
+  mutate(infection_v1 = ifelse(grepl("gestern", dftg$v1), 1,
+                            ifelse(grepl("drei Wochen", dftg$v1), 2, 3)))
+
+
+```
+
+```{r Creating new Variables - First Vignette}
+
+
+### Gender of fictional Character
+
+# 1 = women
+# 0 = men
+
+df_prep <- df_prep %>%
+  mutate(sex_v2 = ifelse(grepl("Nina", dftg$v2), 1,
+                      ifelse(grepl("Elif", dftg$v2), 1,
+                             ifelse(grepl("Li-Ming", dftg$v2), 1, 0))))
+
+### Ethnicity
+
+# 1 = German
+# 2 = Turkish
+# 3 = Asian
+
+df_prep <- df_prep %>%
+  mutate(ethnicity_v2 = ifelse(grepl("M\xfcller", dftg$v2), 1,
+                            ifelse(grepl("Ceylan", dftg$v2), 2, 3)))
+
+### Ethnicity
+
+# 22 = 22 years old
+# 43 = 43 years old
+# 64 = 64 years old
+
+df_prep <- df_prep %>%
+  mutate(age_v2 = ifelse(grepl("22", dftg$v2), 22,
+                            ifelse(grepl("43", dftg$v2), 43, 64)))
+
+### Occupation
+
+# 1 = Nurse
+# 2 = Cashier
+# 3 = Administrative
+
+df_prep <- df_prep %>%
+  mutate(occupation_v2 = ifelse(grepl("Krankenhaus", dftg$v2), 1,
+                            ifelse(grepl("Supermarkt", dftg$v2), 2, 3)))
+
+### Occupation
+
+# 1 = Non-Essential Worker
+# 0 = Essential worker
+
+df_prep <- df_prep %>%
+  mutate(essential_v2 = ifelse(grepl("Home Office", dftg$v2), 1, 0))
+
+### Covid-19
+
+# 1 = Currently infected
+# 2 = Former infected
+# 3 = not mentioned
+
+df_prep <- df_prep %>%
+  mutate(infection_v2 = ifelse(grepl("gestern", dftg$v2), 1,
+                            ifelse(grepl("drei Wochen", dftg$v2), 2, 3)))
+
+
+```
+
+
+```{r Creating new Variables - First Vignette}
+
+
+### Gender of fictional Character
+
+# 1 = women
+# 0 = men
+
+df_prep <- df_prep %>%
+  mutate(sex_v3 = ifelse(grepl("Nina", dftg$v3), 1,
+                      ifelse(grepl("Elif", dftg$v3), 1,
+                             ifelse(grepl("Li-Ming", dftg$v3), 1, 0))))
+
+### Ethnicity
+
+# 1 = German
+# 2 = Turkish
+# 3 = Asian
+
+df_prep <- df_prep %>%
+  mutate(ethnicity_v3 = ifelse(grepl("M\xfcller", dftg$v3), 1,
+                            ifelse(grepl("Ceylan", dftg$v3), 2, 3)))
+
+### Ethnicity
+
+# 22 = 22 years old
+# 43 = 43 years old
+# 64 = 64 years old
+
+df_prep <- df_prep %>%
+  mutate(age_v3 = ifelse(grepl("22", dftg$v3), 22,
+                            ifelse(grepl("43", dftg$v3), 43, 64)))
+
+### Occupation
+
+# 1 = Nurse
+# 2 = Cashier
+# 3 = Administrative
+
+df_prep <- df_prep %>%
+  mutate(occupation_v3 = ifelse(grepl("Krankenhaus", dftg$v3), 1,
+                            ifelse(grepl("Supermarkt", dftg$v3), 2, 3)))
+
+### Occupation
+
+# 1 = Non-Essential Worker
+# 0 = Essential worker
+
+df_prep <- df_prep %>%
+  mutate(essential_v3 = ifelse(grepl("Home Office", dftg$v3), 1, 0))
+
+### Covid-19
+
+# 1 = Currently infected
+# 2 = Former infected
+# 3 = not mentioned
+
+df_prep <- df_prep %>%
+  mutate(infection_v3 = ifelse(grepl("gestern", dftg$v3), 1,
+                            ifelse(grepl("drei Wochen", dftg$v3), 2, 3)))
+
+
+```
+
+```{r Creating new Variables - First Vignette}
+
+
+### Gender of fictional Character
+
+# 1 = women
+# 0 = men
+
+df_prep <- df_prep %>%
+  mutate(sex_v4 = ifelse(grepl("Nina", dftg$v4), 1,
+                      ifelse(grepl("Elif", dftg$v4), 1,
+                             ifelse(grepl("Li-Ming", dftg$v4), 1, 0))))
+
+### Ethnicity
+
+# 1 = German
+# 2 = Turkish
+# 3 = Asian
+
+df_prep <- df_prep %>%
+  mutate(ethnicity_v4 = ifelse(grepl("M\xfcller", dftg$v4), 1,
+                            ifelse(grepl("Ceylan", dftg$v4), 2, 3)))
+
+### Ethnicity
+
+# 22 = 22 years old
+# 43 = 43 years old
+# 64 = 64 years old
+
+df_prep <- df_prep %>%
+  mutate(age_v4 = ifelse(grepl("22", dftg$v4), 22,
+                            ifelse(grepl("43", dftg$v4), 43, 64)))
+
+### Occupation
+
+# 1 = Nurse
+# 2 = Cashier
+# 3 = Administrative
+
+df_prep <- df_prep %>%
+  mutate(occupation_v4 = ifelse(grepl("Krankenhaus", dftg$v4), 1,
+                            ifelse(grepl("Supermarkt", dftg$v4), 2, 3)))
+
+### Occupation
+
+# 1 = Non-Essential Worker
+# 0 = Essential worker
+
+df_prep <- df_prep %>%
+  mutate(essential_v4 = ifelse(grepl("Home Office", dftg$v4), 1, 0))
+
+### Covid-19
+
+# 1 = Currently infected
+# 2 = Former infected
+# 3 = not mentioned
+
+df_prep <- df_prep %>%
+  mutate(infection_v4 = ifelse(grepl("gestern", dftg$v4), 1,
+                            ifelse(grepl("drei Wochen", dftg$v4), 2, 3)))
+
+
+```
+## 
+
+```{r Descriptive Vignette}
+
+### Gender
+df_sex<- df_prep %>% 
+  select(sex_v1, sex_v2, sex_v3, sex_v4)
+
+df_long_sex <- data.frame(sex = unlist(df_sex, use.names = FALSE))
+count_long_sex <- count(df_long_sex, sex) # count how often one vignette appeared
+
+
+c <- count(df_prep, sex_v1) # count how often one vignette appeared
+c1 <- count(df_prep, sex_v2) 
+c2 <- count(df_prep, sex_v3) 
+c3 <- count(df_prep, sex_v4) 
+
+### Age
+
+df_age <- df_prep %>% 
+  select(age_v1, age_v2, age_v3, age_v4)
+
+df_long_age<- data.frame(age = unlist(df_age, use.names = FALSE))
+count_long_age <- count(df_long_age, age) # count how often one vignette appeared
+
+c4 <- count(df_prep, age_v1) # count how often one vignette appeared
+c5 <- count(df_prep, age_v2) 
+c6 <- count(df_prep, age_v3) 
+c7 <- count(df_prep, age_v4) 
+
+### Ethnicity
+
+df_ethnicity <- df_prep %>% 
+  select(ethnicity_v1, ethnicity_v2, ethnicity_v3, ethnicity_v4)
+
+df_long_ethnicity <- data.frame(ethnicity = unlist(df_ethnicity, use.names = FALSE))
+count_long_ethnicity <- count(df_long_ethnicity, ethnicity) # count how often one vignette appeared
+
+c8 <- count(df_prep, ethnicity_v1) # count how often one vignette appeared
+c9 <- count(df_prep, ethnicity_v2) 
+c10 <- count(df_prep, ethnicity_v3) 
+c11 <- count(df_prep, ethnicity_v4)
+
+### Occupation
+
+df_occupation <- df_prep %>% 
+  select(occupation_v1, occupation_v2, occupation_v3, occupation_v4)
+
+df_long_occupation <- data.frame(occupation = unlist(df_occupation, use.names = FALSE))
+count_long_occupation <- count(df_long_occupation, occupation) # count how often one vignette appeared
+
+c12 <- count(df_prep, occupation_v1) # count how often one vignette appeared
+c13 <- count(df_prep, occupation_v2) 
+c14 <- count(df_prep, occupation_v3) 
+c15 <- count(df_prep, occupation_v4)
+
+### Essential
+
+df_essential <- df_prep %>% 
+  select(essential_v1, essential_v2, essential_v3, essential_v4)
+
+df_long_essential <- data.frame(essential = unlist(df_essential, use.names = FALSE))
+count_long_essential <- count(df_long_essential, essential) # count how often one vignette appeared
+
+c16 <- count(df_prep, essential_v1) # count how often one vignette appeared
+c17 <- count(df_prep, essential_v2) 
+c18 <- count(df_prep, essential_v3) 
+c19 <- count(df_prep, essential_v4)
+
+### Covid-19
+
+df_infection <- df_prep %>% 
+  select(infection_v1, infection_v2, infection_v3, infection_v4)
+
+df_long_infection <- data.frame(infection = unlist(df_infection, use.names = FALSE))
+count_long_infection <- count(df_long_infection, infection) # count how often one vignette appeared
+
+c20 <- count(df_prep, infection_v1) # count how often one vignette appeared
+c21 <- count(df_prep, infection_v2) 
+c22 <- count(df_prep, infection_v3) 
+c23 <- count(df_prep, infection_v4) 
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
