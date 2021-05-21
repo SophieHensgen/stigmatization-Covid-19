@@ -1,0 +1,114 @@
+---
+title: "03-data-descriptive"
+author: "Sophie Hensgen"
+date: "5/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(readr)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+```
+
+## Load Data Set
+
+```{r cars}
+
+df_origin <- read_csv("df-preparation.csv")
+
+```
+
+## Descriptive
+
+```{r Descriptive Vignette}
+
+### Gender
+df_sex<- df_prep %>% 
+  select(sex_v1, sex_v2, sex_v3, sex_v4)
+
+df_long_sex <- data.frame(sex = unlist(df_sex, use.names = FALSE))
+count_long_sex <- count(df_long_sex, sex) # count how often one vignette appeared
+
+
+c <- count(df_prep, sex_v1) # count how often one vignette appeared
+c1 <- count(df_prep, sex_v2) 
+c2 <- count(df_prep, sex_v3) 
+c3 <- count(df_prep, sex_v4) 
+
+### Age
+
+df_age <- df_prep %>% 
+  select(age_v1, age_v2, age_v3, age_v4)
+
+df_long_age<- data.frame(age = unlist(df_age, use.names = FALSE))
+count_long_age <- count(df_long_age, age) # count how often one vignette appeared
+
+c4 <- count(df_prep, age_v1) # count how often one vignette appeared
+c5 <- count(df_prep, age_v2) 
+c6 <- count(df_prep, age_v3) 
+c7 <- count(df_prep, age_v4) 
+
+### Ethnicity
+
+df_ethnicity <- df_prep %>% 
+  select(ethnicity_v1, ethnicity_v2, ethnicity_v3, ethnicity_v4)
+
+df_long_ethnicity <- data.frame(ethnicity = unlist(df_ethnicity, use.names = FALSE))
+count_long_ethnicity <- count(df_long_ethnicity, ethnicity) # count how often one vignette appeared
+
+c8 <- count(df_prep, ethnicity_v1) # count how often one vignette appeared
+c9 <- count(df_prep, ethnicity_v2) 
+c10 <- count(df_prep, ethnicity_v3) 
+c11 <- count(df_prep, ethnicity_v4)
+
+### Occupation
+
+df_occupation <- df_prep %>% 
+  select(occupation_v1, occupation_v2, occupation_v3, occupation_v4)
+
+df_long_occupation <- data.frame(occupation = unlist(df_occupation, use.names = FALSE))
+count_long_occupation <- count(df_long_occupation, occupation) # count how often one vignette appeared
+
+c12 <- count(df_prep, occupation_v1) # count how often one vignette appeared
+c13 <- count(df_prep, occupation_v2) 
+c14 <- count(df_prep, occupation_v3) 
+c15 <- count(df_prep, occupation_v4)
+
+### Essential
+
+df_essential <- df_prep %>% 
+  select(essential_v1, essential_v2, essential_v3, essential_v4)
+
+df_long_essential <- data.frame(essential = unlist(df_essential, use.names = FALSE))
+count_long_essential <- count(df_long_essential, essential) # count how often one vignette appeared
+
+c16 <- count(df_prep, essential_v1) # count how often one vignette appeared
+c17 <- count(df_prep, essential_v2) 
+c18 <- count(df_prep, essential_v3) 
+c19 <- count(df_prep, essential_v4)
+
+### Covid-19
+
+df_infection <- df_prep %>% 
+  select(infection_v1, infection_v2, infection_v3, infection_v4)
+
+df_long_infection <- data.frame(infection = unlist(df_infection, use.names = FALSE))
+count_long_infection <- count(df_long_infection, infection) # count how often one vignette appeared
+
+c20 <- count(df_prep, infection_v1) # count how often one vignette appeared
+c21 <- count(df_prep, infection_v2) 
+c22 <- count(df_prep, infection_v3) 
+c23 <- count(df_prep, infection_v4) 
+
+
+```
+
+```{r pressure, echo=FALSE}
+
+
+```
+
+
