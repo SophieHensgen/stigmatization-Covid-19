@@ -12,6 +12,9 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(data.table)
+library(sem)
+library(reshape2)
+library(xtable)
 ```
 
 ## Load Data Set
@@ -25,7 +28,7 @@ df_stigma_long <- read_csv("df_stigma_long.csv")
 
 ## Descriptive
 
-```{r descriptive social demo}
+```{r descriptive social demo, include = FALSE}
 
 ### Geschlecht - SD100
 
@@ -34,14 +37,582 @@ summary(df_stigma_long)
 
 ## Descriptive
 
-```{r Descriptive Vignette}
+```{r Factor analysis - Social Distance Scale}
 
+stigma.sds <- df_stigma_long %>%
+  select(SDS100, SDS200, SDS300, SDS400, SDS500, SDS600)
+
+### Factor Analysis
+
+stigma.sds.fa <- factanal(stigma.sds, factors = 2)
+
+
+### Interpretation the results
+
+apply(stigma.sds.fa$loadings^2,1,sum) # communality (should be high)
+1 - apply(stigma.sds.fa$loadings^2,1,sum) # uniquness (should be low)
+
+# factors are worth keeping, as thir SS loadings are greater than 1 (Kaiser's rule)
+
+
+### Residual Matrix
+
+Lambda <- stigma.sds.fa$loadings
+Psi <- diag(stigma.sds.fa$uniquenesses)
+S <- stigma.sds.fa$correlation
+Sigma <- Lambda %*% t(Lambda) + Psi
+round(S - Sigma, 6)
 
 ```
+
+```{r Factor analysis - Social Distance Scale}
+### Interpretation Factors
+
+stigma.sds.fa.none <- factanal(stigma.sds, factors = 2, rotation = "none")
+stigma.sds.fa.varimax <- factanal(stigma.sds, factors = 2, rotation = "varimax")
+stigma.sds.fa.promax <- factanal(stigma.sds, factors = 2, rotation = "promax")
+
+par(mfrow = c(1,3))
+plot(stigma.sds.fa.none$loadings[,1], 
+     stigma.sds.fa.none$loadings[,2],
+     xlab = "Factor 1", 
+     ylab = "Factor 2", 
+     ylim = c(-1,1),
+     xlim = c(-1,1),
+     main = "No rotation")
+abline(h = 0, v = 0)
+
+
+plot(stigma.sds.fa.varimax$loadings[,1], 
+     stigma.sds.fa.varimax$loadings[,2],
+     xlab = "Factor 1", 
+     ylab = "Factor 2", 
+     ylim = c(-1,1),
+     xlim = c(-1,1),
+     main = "Varimax rotation")
+
+text(stigma.sds.fa.varimax$loadings[,1]-0.08, 
+     stigma.sds.fa.varimax$loadings[,2]+0.08,
+      colnames(stigma),
+      col="blue")
+abline(h = 0, v = 0)
+
+plot(stigma.sds.fa.promax$loadings[,1], 
+     stigma.sds.fa.promax$loadings[,2],
+     xlab = "Factor 1", 
+     ylab = "Factor 2",
+     ylim = c(-1,1),
+     xlim = c(-1,1),
+     main = "Promax rotation")
+abline(h = 0, v = 0)
+
+text(stigma.sds.fa.promax$loadings[,1]-0.08, 
+     stigma.sds.fa.promax$loadings[,2]+0.08,
+      colnames(stigma),
+      col="blue")
+abline(h = 0, v = 0)
+
+### Interpretation:
+
+# Explanation of rotation: 
+   #  The purpose of a rotation is to produce factors with a mix of high and low loadings and few moderate-sized loadings. The idea is to give meaning to the    
+   #  factors, which helps interpret them. From a mathematical viewpoint, there is no difference between a rotated and unrotated matrix. The fitted model is the 
+   #  same, the uniquenesses are the same, and the proportion of variance explained is the same.
+
+
+# SDS100 & SDS200 differ from the others, possibly because they are more long term as the others. Contrary to the believe, that the work aspect could also be long term, it might be, that it is not viewed as so long term
+# Concluding, it would make sense to combine SDS100 & SDS200 in one index Variable and the others in one.
+```
+
+```{r Factor analysis - Social Distance Scale - graph}
+
+## Original fa - Social Distance Scale
+
+str(stigma.sds.fa$loadings)
+class(stigma.sds.fa$loadings)
+
+loadings.sds <- xtable(unclass(stigma.sds.fa$loadings)) # putting loadings into data frame
+loadings.sds$id <- c("SDS100", "SDS200", "SDS300", "SDS400", "SDS500", "SDS600") # add id
+
+loadings.sds.long <- melt(loadings.sds, id="id", 
+                   measure=c("Factor1", "Factor2"), 
+                   variable.name="Factor", value.name="Loading")
+
+
+ggplot(loadings.sds.long, aes(id, abs(Loading), fill=Loading)) + 
+  facet_wrap(~ Factor, nrow=1) + #place the factors in separate facets
+  geom_bar(stat="identity") + #make the bars
+  coord_flip() + #flip the axes so the test names can be horizontal  
+  #define the fill color gradient: blue=positive, red=negative
+  scale_fill_gradient2(name = "Loading", 
+                       high = "blue", mid = "white", low = "red", 
+                       midpoint=0, guide=F) +
+  ylab("Loading Strength") + #improve y-axis label
+  theme_bw(base_size=10)
+
+###########################################################################################################################################
+
+## No Rotation fa - Social Distance Scale
+
+stigma.sds.fa.none <- factanal(stigma.sds, factors = 2, rotation = "none")
+
+loadings.sds.none <- xtable(unclass(stigma.sds.fa.none$loadings)) # putting loadings into data frame
+loadings.sds.none$id <- c("SDS100", "SDS200", "SDS300", "SDS400", "SDS500", "SDS600") # add id
+
+loadings.sds.none.long <- melt(loadings.sds.none, id="id", 
+                   measure=c("Factor1", "Factor2"), 
+                   variable.name="Factor", value.name="Loading")
+
+
+ggplot(loadings.sds.none.long, aes(id, abs(Loading), fill=Loading)) + 
+  facet_wrap(~ Factor, nrow=1) + #place the factors in separate facets
+  geom_bar(stat="identity") + #make the bars
+  coord_flip() + #flip the axes so the test names can be horizontal  
+  #define the fill color gradient: blue=positive, red=negative
+  scale_fill_gradient2(name = "Loading", 
+                       high = "blue", mid = "white", low = "red", 
+                       midpoint=0, guide=F) +
+  ylab("Loading Strength") + #improve y-axis label
+  theme_bw(base_size=10)
+
+###########################################################################################################################################
+
+## Varimax fa - Social Distance Scale
+
+stigma.ec.fa.varimax <- factanal(stigma.sds, factors = 2, rotation = "varimax")
+
+loadings.ec.varimax <- xtable(unclass(stigma.ec.fa.varimax$loadings)) # putting loadings into data frame
+loadings.ec.varimax$id <- c("SDS100", "SDS200", "SDS300", "SDS400", "SDS500", "SDS600") # add id
+
+loadings.ec.varimax.long <- melt(loadings.ec.varimax, id="id", 
+                   measure=c("Factor1", "Factor2"), 
+                   variable.name="Factor", value.name="Loading")
+
+
+ggplot(loadings.ec.varimax.long, aes(id, abs(Loading), fill=Loading)) + 
+  facet_wrap(~ Factor, nrow=1) + #place the factors in separate facets
+  geom_bar(stat="identity") + #make the bars
+  coord_flip() + #flip the axes so the test names can be horizontal  
+  #define the fill color gradient: blue=positive, red=negative
+  scale_fill_gradient2(name = "Loading", 
+                       high = "blue", mid = "white", low = "red", 
+                       midpoint=0, guide=F) +
+  ylab("Loading Strength") + #improve y-axis label
+  theme_bw(base_size=10)
+
+###########################################################################################################################################
+
+## Promax fa - Social Distance Scale
+
+stigma.sds.fa.promax <- factanal(stigma.sds, factors = 2, rotation = "promax")
+
+loadings.sds.promax <- xtable(unclass(stigma.sds.fa.promax$loadings)) # putting loadings into data frame
+loadings.sds.promax$id <- c("SDS100", "SDS200", "SDS300", "SDS400", "SDS500", "SDS600") # add id
+
+loadings.sds.promax.long <- melt(loadings.sds.promax, id="id", 
+                   measure=c("Factor1", "Factor2"), 
+                   variable.name="Factor", value.name="Loading")
+
+
+ggplot(loadings.sds.promax.long, aes(id, abs(Loading), fill=Loading)) + 
+  facet_wrap(~ Factor, nrow=1) + #place the factors in separate facets
+  geom_bar(stat="identity") + #make the bars
+  coord_flip() + #flip the axes so the test names can be horizontal  
+  #define the fill color gradient: blue=positive, red=negative
+  scale_fill_gradient2(name = "Loading", 
+                       high = "blue", mid = "white", low = "red", 
+                       midpoint=0, guide=F) +
+  ylab("Loading Strength") + #improve y-axis label
+  theme_bw(base_size=10)
+
+```
+
+
+```{r Factor analysis - EInstellung Lage - FA}
+
+stigma.ec <- df_stigma_long %>%
+  select(EC19100, EC19200, EC19300, EC19400)
+
+### Factor Analysis
+
+stigma.ec.fa <- factanal(stigma.ec, factors = 1)
+
+
+### Interpretation the results
+
+apply(stigma.ec.fa$loadings^2,1,sum) # communality (should be high)
+1 - apply(stigma.ec.fa$loadings^2,1,sum) # uniquness (should be low)
+
+# factors are worth keeping, as thir SS loadings are greater than 1 (Kaiser's rule)
+
+
+### Residual Matrix
+
+Lambda <- stigma.ec.fa$loadings
+Psi <- diag(stigma.ec.fa$uniquenesses)
+S <- stigma.ec.fa$correlation
+Sigma <- Lambda %*% t(Lambda) + Psi
+round(S - Sigma, 6)
+
+
+### Interpretation Factors
+
+stigma.ec.fa.none <- factanal(stigma.ec, factors = 1, rotation = "none")
+stigma.ec.fa.varimax <- factanal(stigma.ec, factors = 1, rotation = "varimax")
+stigma.ec.fa.promax <- factanal(stigma.ec, factors = 1, rotation = "promax")
+
+
+par(mfrow = c(1,3))
+plot(stigma.ec.fa.none$loadings[,1], 
+     stigma.ec.fa.none$loadings[,1],
+     xlab = "Factor 1", 
+     ylab = "Factor 1", 
+     ylim = c(-1,1),
+     xlim = c(-1,1),
+     main = "No rotation")
+abline(h = 0, v = 0)
+
+
+plot(stigma.ec.fa.varimax$loadings[,1], 
+     stigma.ec.fa.varimax$loadings[,1],
+     xlab = "Factor 1", 
+     ylab = "Factor 1", 
+     ylim = c(-1,1),
+     xlim = c(-1,1),
+     main = "Varimax rotation")
+
+text(stigma.ec.fa.varimax$loadings[,1]-0.08, 
+     stigma.ec.fa.varimax$loadings[,1]+0.08,
+      colnames(stigma.ec),
+      col="blue")
+abline(h = 0, v = 0)
+
+plot(stigma.ec.fa.promax$loadings[,1], 
+     stigma.ec.fa.promax$loadings[,1],
+     xlab = "Factor 1", 
+     ylab = "Factor 1",
+     ylim = c(-1,1),
+     xlim = c(-1,1),
+     main = "Promax rotation")
+abline(h = 0, v = 0)
+
+text(stigma.ec.fa.promax$loadings[,1]-0.08, 
+     stigma.ec.fa.promax$loadings[,1]+0.08,
+      colnames(stigma.ec),
+      col="blue")
+abline(h = 0, v = 0)
+
+### Interpretation:
+
+# Explanation of rotation: 
+   #  The purpose of a rotation is to produce factors with a mix of high and low loadings and few moderate-sized loadings. The idea is to give meaning to the    
+   #  factors, which helps interpret them. From a mathematical viewpoint, there is no difference between a rotated and unrotated matrix. The fitted model is the 
+   #  same, the uniquenesses are the same, and the proportion of variance explained is the same.
+
+
+# In the graph we see, that EC19100 and EC10400 have similar values. EC19200 and EC19300 have similar values. Which makes sense, because 100 and 400 ask after financial situations and the others after health. In general, they have all similar values.
+# The question is, should one build an index out of all of them or split them up?
+
+```
+
+
+```{r Factor analysis - Einstellungen Lage - graph}
+
+## Original fa - Einstellungen Lage
+
+str(stigma.ec.fa$loadings)
+class(stigma.ec.fa$loadings)
+
+loadings.ec <- xtable(unclass(stigma.ec.fa$loadings)) # putting loadings into data frame
+loadings.ec$id <- c("EC19100", "EC19200", "EC19300", "EC19400") # add id
+
+loadings.ec.long <- melt(loadings.ec, id="id", 
+                   measure=c("Factor1"), 
+                   variable.name="Factor", value.name="Loading")
+
+
+ggplot(loadings.ec.long, aes(id, abs(Loading), fill=Loading)) + 
+  facet_wrap(~ Factor, nrow=1) + #place the factors in separate facets
+  geom_bar(stat="identity") + #make the bars
+  coord_flip() + #flip the axes so the test names can be horizontal  
+  #define the fill color gradient: blue=positive, red=negative
+  scale_fill_gradient2(name = "Loading", 
+                       high = "blue", mid = "white", low = "red", 
+                       midpoint=0, guide=F) +
+  ylab("Loading Strength") + #improve y-axis label
+  theme_bw(base_size=10)
+
+###########################################################################################################################################
+
+## No Rotation fa - Einstellungen Lage
+
+stigma.ec.fa.none <- factanal(stigma.ec, factors = 1, rotation = "none")
+
+loadings.ec.none <- xtable(unclass(stigma.ec.fa.none$loadings)) # putting loadings into data frame
+loadings.ec.none$id <- c("EC19100", "EC19200", "EC19300", "EC19400") # add id
+
+loadings.ec.none.long <- melt(loadings.ec.none, id="id", 
+                   measure=c("Factor1"), 
+                   variable.name="Factor", value.name="Loading")
+
+
+ggplot(loadings.ec.none.long, aes(id, abs(Loading), fill=Loading)) + 
+  facet_wrap(~ Factor, nrow=1) + #place the factors in separate facets
+  geom_bar(stat="identity") + #make the bars
+  coord_flip() + #flip the axes so the test names can be horizontal  
+  #define the fill color gradient: blue=positive, red=negative
+  scale_fill_gradient2(name = "Loading", 
+                       high = "blue", mid = "white", low = "red", 
+                       midpoint=0, guide=F) +
+  ylab("Loading Strength") + #improve y-axis label
+  theme_bw(base_size=10)
+
+###########################################################################################################################################
+
+## Varimax fa - Einstellungen Lage
+
+stigma.ec.fa.varimax <- factanal(stigma.ec, factors = 1, rotation = "varimax")
+
+loadings.ec.varimax <- xtable(unclass(stigma.ec.fa.varimax$loadings)) # putting loadings into data frame
+loadings.ec.varimax$id <- c("EC19100", "EC19200", "EC19300", "EC19400") # add id
+
+loadings.ec.varimax.long <- melt(loadings.ec.varimax, id="id", 
+                   measure=c("Factor1"), 
+                   variable.name="Factor", value.name="Loading")
+
+
+ggplot(loadings.ec.varimax.long, aes(id, abs(Loading), fill=Loading)) + 
+  facet_wrap(~ Factor, nrow=1) + #place the factors in separate facets
+  geom_bar(stat="identity") + #make the bars
+  coord_flip() + #flip the axes so the test names can be horizontal  
+  #define the fill color gradient: blue=positive, red=negative
+  scale_fill_gradient2(name = "Loading", 
+                       high = "blue", mid = "white", low = "red", 
+                       midpoint=0, guide=F) +
+  ylab("Loading Strength") + #improve y-axis label
+  theme_bw(base_size=10)
+
+###########################################################################################################################################
+
+## Promax fa - Einstellungen Lage
+
+stigma.ec.fa.promax <- factanal(stigma.ec, factors = 1, rotation = "promax")
+
+loadings.ec.promax <- xtable(unclass(stigma.ec.fa.promax$loadings)) # putting loadings into data frame
+loadings.ec.promax$id <- c("EC19100", "EC19200", "EC19300", "EC19400") # add id
+
+loadings.ec.promax.long <- melt(loadings.ec.promax, id="id", 
+                   measure=c("Factor1"), 
+                   variable.name="Factor", value.name="Loading")
+
+
+ggplot(loadings.ec.promax.long, aes(id, abs(Loading), fill=Loading)) + 
+  facet_wrap(~ Factor, nrow=1) + #place the factors in separate facets
+  geom_bar(stat="identity") + #make the bars
+  coord_flip() + #flip the axes so the test names can be horizontal  
+  #define the fill color gradient: blue=positive, red=negative
+  scale_fill_gradient2(name = "Loading", 
+                       high = "blue", mid = "white", low = "red", 
+                       midpoint=0, guide=F) +
+  ylab("Loading Strength") + #improve y-axis label
+  theme_bw(base_size=10)
+
+```
+
+
+```{r Factor analysis - Maßnahmen Einstellungen}
+
+stigma.mc <- df_stigma_long %>%
+  select(MC19100_1, MC19100_2, MC19100_3, MC19100_4, MC19100_5, MC19100_6, MC19100_7, MC19100_8, MC19100_9)
+
+### Factor Analysis
+
+stigma.mc.fa <- factanal(stigma.mc, factors = 3)
+
+
+### Interpretation the results
+
+apply(stigma.mc.fa$loadings^2,1,sum) # communality (should be high)
+1 - apply(stigma.mc.fa$loadings^2,1,sum) # uniquness (should be low)
+
+# factors are worth keeping, as thir SS loadings are greater than 1 (Kaiser's rule)
+# did try 4 factors, but the fourth factor was not over 1
+
+### Residual Matrix
+
+Lambda <- stigma.mc.fa$loadings
+Psi <- diag(stigma.mc.fa$uniquenesses)
+S <- stigma.mc.fa$correlation
+Sigma <- Lambda %*% t(Lambda) + Psi
+round(S - Sigma, 6)
+
+```
+
+
+```{r Factor analysis}
+### Interpretation Factors
+
+## original fa - graph
+
+str(stigma.mc.fa$loadings)
+class(stigma.mc.fa$loadings)
+
+loadings.og <- xtable(unclass(stigma.mc.fa$loadings)) # putting loadings into data frame
+loadings.og$id <- c("MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8", "MC19100_9") # add id
+
+loadings.og.long <- melt(loadings.og, id="id", 
+                   measure=c("Factor1", "Factor2", "Factor3"), 
+                   variable.name="Factor", value.name="Loading")
+
+
+ggplot(loadings.og.long, aes(id, abs(Loading), fill=Loading)) + 
+  facet_wrap(~ Factor, nrow=1) + #place the factors in separate facets
+  geom_bar(stat="identity") + #make the bars
+  coord_flip() + #flip the axes so the test names can be horizontal  
+  #define the fill color gradient: blue=positive, red=negative
+  scale_fill_gradient2(name = "Loading", 
+                       high = "blue", mid = "white", low = "red", 
+                       midpoint=0, guide=F) +
+  ylab("Loading Strength") + #improve y-axis label
+  theme_bw(base_size=10)
+
+###########################################################################################################################################
+
+## no rotation fa - graph
+
+stigma.mc.fa.none <- factanal(stigma.mc, factors = 3, rotation = "none")
+
+str(stigma.mc.fa.none$loadings)
+class(stigma.mc.fa.none$loadings)
+
+loadings.none <- xtable(unclass(stigma.mc.fa.none$loadings)) # putting loadings into data frame
+loadings.none$id <- c("MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8", "MC19100_9") # add id
+
+loadings.none.long <- melt(loadings.none, id="id", 
+                   measure=c("Factor1", "Factor2", "Factor3"), 
+                   variable.name="Factor", value.name="Loading")
+
+
+ggplot(loadings.none.long, aes(id, abs(Loading), fill=Loading)) + 
+  facet_wrap(~ Factor, nrow=1) + #place the factors in separate facets
+  geom_bar(stat="identity") + #make the bars
+  coord_flip() + #flip the axes so the test names can be horizontal  
+  #define the fill color gradient: blue=positive, red=negative
+  scale_fill_gradient2(name = "Loading", 
+                       high = "blue", mid = "white", low = "red", 
+                       midpoint=0, guide=F) +
+  ylab("Loading Strength") + #improve y-axis label
+  theme_bw(base_size=10)
+###########################################################################################################################################
+
+## varimax fa - graph
+
+stigma.mc.fa.varimax <- factanal(stigma.mc, factors = 3, rotation = "varimax")
+
+str(stigma.mc.fa.varimax$loadings)
+class(stigma.mc.fa.varimax$loadings)
+
+loadings.varimax <- xtable(unclass(stigma.mc.fa.varimax$loadings)) # putting loadings into data frame
+loadings.varimax$id <- c("MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8", "MC19100_9") # add id
+
+loadings.varimax.long <- melt(loadings.varimax, id="id", 
+                   measure=c("Factor1", "Factor2", "Factor3"), 
+                   variable.name="Factor", value.name="Loading")
+
+
+ggplot(loadings.varimax.long, aes(id, abs(Loading), fill=Loading)) + 
+  facet_wrap(~ Factor, nrow=1) + #place the factors in separate facets
+  geom_bar(stat="identity") + #make the bars
+  coord_flip() + #flip the axes so the test names can be horizontal  
+  #define the fill color gradient: blue=positive, red=negative
+  scale_fill_gradient2(name = "Loading", 
+                       high = "blue", mid = "white", low = "red", 
+                       midpoint=0, guide=F) +
+  ylab("Loading Strength") + #improve y-axis label
+  theme_bw(base_size=10)
+###########################################################################################################################################
+
+## promax fa - graph
+
+stigma.mc.fa.promax <- factanal(stigma.mc, factors = 3, rotation = "promax")
+ 
+str(stigma.mc.fa.promax$loadings)
+class(stigma.mc.fa.promax$loadings)
+
+loadings.promax <- xtable(unclass(stigma.mc.fa.promax$loadings)) # putting loadings into data frame
+loadings.promax$id <- c("MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8", "MC19100_9") # add id
+
+loadings.promax.long <- melt(loadings.promax, id="id", 
+                   measure=c("Factor1", "Factor2", "Factor3"), 
+                   variable.name="Factor", value.name="Loading")
+
+
+ggplot(loadings.promax.long, aes(id, abs(Loading), fill=Loading)) + 
+  facet_wrap(~ Factor, nrow=1) + #place the factors in separate facets
+  geom_bar(stat="identity") + #make the bars
+  coord_flip() + #flip the axes so the test names can be horizontal  
+  #define the fill color gradient: blue=positive, red=negative
+  scale_fill_gradient2(name = "Loading", 
+                       high = "blue", mid = "white", low = "red", 
+                       midpoint=0, guide=F) +
+  ylab("Loading Strength") + #improve y-axis label
+  theme_bw(base_size=10)
+###########################################################################################################################################
+
+
+### Interpretation:
+
+# Explanation of rotation: 
+   #  The purpose of a rotation is to produce factors with a mix of high and low loadings and few moderate-sized loadings. The idea is to give meaning to the    
+   #  factors, which helps interpret them. From a mathematical viewpoint, there is no difference between a rotated and unrotated matrix. The fitted model is the 
+   #  same, the uniquenesses are the same, and the proportion of variance explained is the same.
+
+
+# According to the factor analysis and the Kaiser's rule, there should be three factors. 
+# through the last rotation i would suggest combining 1, 2, 4 and 7. Also 3, 5 and 6. I am unsure about 9 and 8. As 9 is the complete opposite. And also was exclusive in the survey.
+```
+
 
 ```{r pressure, echo=FALSE}
 
 
 ```
+
+```{r Factor analysis}
+### Interpretation Factors
+
+
+load(url("http://dmirman.github.io/FAex.Rdata"))
+
+
+
+
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
