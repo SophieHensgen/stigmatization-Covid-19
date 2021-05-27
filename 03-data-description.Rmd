@@ -104,7 +104,7 @@ plot(stigma.sds.fa.varimax$loadings[,1],
 
 text(stigma.sds.fa.varimax$loadings[,1]-0.08, 
      stigma.sds.fa.varimax$loadings[,2]+0.08,
-      colnames(stigma),
+      colnames(stigma.sds),
       col="blue")
 abline(h = 0, v = 0)
 
@@ -121,7 +121,7 @@ abline(h = 0, v = 0)
 
 text(stigma.sds.fa.promax$loadings[,1]-0.08, 
      stigma.sds.fa.promax$loadings[,2]+0.08,
-      colnames(stigma),
+      colnames(stigma.sds),
       col="blue")
 abline(h = 0, v = 0)
 
@@ -249,9 +249,8 @@ stigma.ec <- df_stigma_long %>%
   select(EC19100, EC19200, EC19300, EC19400)
 
 ### Factor Analysis
-
+stigma.ec <- na.omit(stigma.ec)
 stigma.ec.fa <- factanal(stigma.ec, factors = 1)
-
 
 ### Interpretation the results
 
