@@ -35,7 +35,14 @@ df_stigma_long <- read_csv("df_stigma_long.csv")
 summary(df_stigma_long)
 ```
 
-## Descriptive
+###########################################################################################################################################
+##                                                                                                                                       ##
+##                                                 Factor Analysis                                                                       ##
+##                                                                                                                                       ##
+###########################################################################################################################################
+
+
+## Factor Analysis Social Distance Scale
 
 ```{r Factor analysis - Social Distance Scale}
 
@@ -65,12 +72,15 @@ round(S - Sigma, 6)
 
 ```
 
-```{r Factor analysis - Social Distance Scale}
+```{r Factor analysis - Social Distance Scale - graphs}
+
 ### Interpretation Factors
 
 stigma.sds.fa.none <- factanal(stigma.sds, factors = 2, rotation = "none")
 stigma.sds.fa.varimax <- factanal(stigma.sds, factors = 2, rotation = "varimax")
 stigma.sds.fa.promax <- factanal(stigma.sds, factors = 2, rotation = "promax")
+
+###########################################################################################################################################
 
 par(mfrow = c(1,3))
 plot(stigma.sds.fa.none$loadings[,1], 
@@ -82,6 +92,7 @@ plot(stigma.sds.fa.none$loadings[,1],
      main = "No rotation")
 abline(h = 0, v = 0)
 
+###########################################################################################################################################
 
 plot(stigma.sds.fa.varimax$loadings[,1], 
      stigma.sds.fa.varimax$loadings[,2],
@@ -97,6 +108,8 @@ text(stigma.sds.fa.varimax$loadings[,1]-0.08,
       col="blue")
 abline(h = 0, v = 0)
 
+###########################################################################################################################################
+
 plot(stigma.sds.fa.promax$loadings[,1], 
      stigma.sds.fa.promax$loadings[,2],
      xlab = "Factor 1", 
@@ -111,6 +124,8 @@ text(stigma.sds.fa.promax$loadings[,1]-0.08,
       colnames(stigma),
       col="blue")
 abline(h = 0, v = 0)
+
+###########################################################################################################################################
 
 ### Interpretation:
 
@@ -228,7 +243,7 @@ ggplot(loadings.sds.promax.long, aes(id, abs(Loading), fill=Loading)) +
 ```
 
 
-```{r Factor analysis - EInstellung Lage - FA}
+```{r Factor analysis - Einstellung Lage - FA}
 
 stigma.ec <- df_stigma_long %>%
   select(EC19100, EC19200, EC19300, EC19400)
@@ -254,7 +269,10 @@ S <- stigma.ec.fa$correlation
 Sigma <- Lambda %*% t(Lambda) + Psi
 round(S - Sigma, 6)
 
+```
 
+
+```{r Factor analysis - Einstellung Lage - Graphs}
 ### Interpretation Factors
 
 stigma.ec.fa.none <- factanal(stigma.ec, factors = 1, rotation = "none")
@@ -272,6 +290,7 @@ plot(stigma.ec.fa.none$loadings[,1],
      main = "No rotation")
 abline(h = 0, v = 0)
 
+###########################################################################################################################################
 
 plot(stigma.ec.fa.varimax$loadings[,1], 
      stigma.ec.fa.varimax$loadings[,1],
@@ -286,6 +305,8 @@ text(stigma.ec.fa.varimax$loadings[,1]-0.08,
       colnames(stigma.ec),
       col="blue")
 abline(h = 0, v = 0)
+
+###########################################################################################################################################
 
 plot(stigma.ec.fa.promax$loadings[,1], 
      stigma.ec.fa.promax$loadings[,1],
@@ -302,6 +323,8 @@ text(stigma.ec.fa.promax$loadings[,1]-0.08,
       col="blue")
 abline(h = 0, v = 0)
 
+###########################################################################################################################################
+
 ### Interpretation:
 
 # Explanation of rotation: 
@@ -316,7 +339,7 @@ abline(h = 0, v = 0)
 ```
 
 
-```{r Factor analysis - Einstellungen Lage - graph}
+```{r Factor analysis - Einstellungen Lage - ggplot2}
 
 ## Original fa - Einstellungen Lage
 
