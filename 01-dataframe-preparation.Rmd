@@ -659,7 +659,7 @@ df_nolab <- df_nolab %>%
 
 ###########################################################################################################################################
 ##                                                                                                                                       ##
-##                                                Saving Data Frame                                                                      ##
+##                                                Saving Wide Data Frame                                                                 ##
 ##                                                                                                                                       ##
 ###########################################################################################################################################
 
@@ -689,6 +689,110 @@ colnames(df_stigma_long) <- c("id","V100", "V200", "V300", "V400", "SD100", "SD2
 ```
 
 
+###########################################################################################################################################
+##                                                                                                                                       ##
+##                                                 Index Variablen                                                                       ##
+##                                                                                                                                       ##
+###########################################################################################################################################
+
+## Social Distance Scale
+
+```{r Index Variable -  Social Distance Scale}
+
+## Explanation 
+
+# I am going to do 3 Index Variables.
+#   1. One including all of the 6 questions
+#   2. One including only the first to, regarding marriage and neighbours
+#      -->  According to the factor analysis, being neighbours and married into family seem to be get similar answers, which is why they should create a index variable
+#   3. One including only the last four, regarding work, food, visit, child care
+#      -->  According to the factor analysis, these four question seemed to be answered similarly, which is why they should create a index variable
+
+## First Index Variable - including all 6 questions
+
+df_stigma_long <- df_stigma_long %>%
+  mutate(gen_sds = (SDS100 + SDS200 + SDS300 + SDS400 + SDS500 + SDS600)/6) %>%
+  mutate_if(is.numeric, ~round(., 2))
+
+df_stigma_long$gen_sds
+
+
+## Second Index Variable - including SDS100 & SDS200 questions
+
+df_stigma_long <- df_stigma_long %>%
+  mutate(gen_sds_longterm = (SDS100 + SDS200)/2) %>%
+  mutate_if(is.numeric, ~round(., 2))
+
+df_stigma_long$gen_sds_longterm
+
+
+## Third Index Variable - including SDS300, SDS400, SDS500 & SDS600 questions
+
+df_stigma_long <- df_stigma_long %>%
+  mutate(gen_sds_shortterm = (SDS300 + SDS400 + SDS500 + SDS600)/4) %>%
+  mutate_if(is.numeric, ~round(., 2))
+
+df_stigma_long$gen_sds_shortterm
+
+
+```
+
+## Einstellung Lage 
+
+```{r Index Variable -  Social Distance Scale}
+
+## Explanation 
+
+# I am going to do 3 Index Variables.
+#   1. One including all of the 4 questions
+#   2. One including only the ones regarding health
+#      -->  According to the factor analysis, being health question were answered similarly, which is why they should create a index variable
+#   3. One including only the ones regarding the financial situation
+#      -->  According to the factor analysis, these two question seemed to be answered similarly, which is why they should create a index variable
+
+## First Index Variable - including all 4 questions
+
+df_stigma_long <- df_stigma_long %>%
+  mutate(gen_situation = (EC19100 + EC19200 + EC19300 + EC19400)/4) %>%
+  mutate_if(is.numeric, ~round(., 2))
+
+df_stigma_long$gen_situation
+
+
+## Second Index Variable - including EC19200 + EC19300 questions
+
+df_stigma_long <- df_stigma_long %>%
+  mutate(gen_situation_gesund = (EC19200 + EC19300)/2) %>%
+  mutate_if(is.numeric, ~round(., 2))
+
+df_stigma_long$gen_situation_gesund
+
+
+## Third Index Variable - including EC19100 + EC19400 questions
+
+df_stigma_long <- df_stigma_long %>%
+  mutate(gen_situation_finanzen = (EC19100 + EC19400)/2) %>%
+  mutate_if(is.numeric, ~round(., 2))
+
+df_stigma_long$gen_situation_finanzen
+
+
+```
+
+
+
+## Einstellung Maßnahmen
+
+```{r Index Variable -  Social Distance Scale}
+
+## Explanation 
+
+# Unclear
+
+
+
+
+```
 
 ## Saving Data Frame
 
