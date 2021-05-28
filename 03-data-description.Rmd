@@ -637,13 +637,301 @@ ggplot(df_stigma_long, aes(x = gen_sds, y = gen_infektion_v)) +
 # Es scheint kein Vignetten Effekt vorzuliegen, anhand der descriptiven Statistik
 ```
 
-```{r Factor analysis}
-### Interpretation Factors
+```{r Boxplots Alter}
+
+### Boxplot to look into differences 
+
+## Alter 
+
+ggplot(df_stigma_long, aes(y = gen_sds)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_alter_v) 
+
+ggplot(df_stigma_long, aes(y = gen_sds_longterm)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_alter_v)
+
+ggplot(df_stigma_long, aes(y = gen_sds_shortterm)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_alter_v)
+
+```
+
+```{r Boxplots Geschlecht}
+
+## Geschlecht
+
+ggplot(df_stigma_long, aes(y = gen_sds)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_sex_v)
+
+ggplot(df_stigma_long, aes(y = gen_sds_longterm)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_sex_v)
+
+ggplot(df_stigma_long, aes(y = gen_sds_shortterm)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_sex_v)
+```
+
+```{r Boxplots Ethnie}
+##  Ethnie
+
+ggplot(df_stigma_long, aes(y = gen_sds)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_ethnie_v)
+
+ggplot(df_stigma_long, aes(y = gen_sds_longterm)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_ethnie_v)
+
+ggplot(df_stigma_long, aes(y = gen_sds_shortterm)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_ethnie_v)
+```
+
+```{r Boxplots Beruf}
+## Beruf
+
+ggplot(df_stigma_long, aes(y = gen_sds)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_beruf_v)
+
+ggplot(df_stigma_long, aes(y = gen_sds_longterm)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_beruf_v)
+
+ggplot(df_stigma_long, aes(y = gen_sds_shortterm)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_beruf_v)
+```
+
+```{r Boxplots Essential}
+
+## Essential
+
+ggplot(df_stigma_long, aes(y = gen_sds)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_essential_v)
+
+ggplot(df_stigma_long, aes(y = gen_sds_longterm)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_essential_v)
+
+ggplot(df_stigma_long, aes(y = gen_sds_shortterm)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_essential_v)
+```
+
+```{r Boxplots Infektion}
+
+## Infektion
+
+ggplot(df_stigma_long, aes(y = gen_sds)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(y = gen_sds_longterm)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(y = gen_sds_shortterm)) +
+  geom_boxplot()  +
+  facet_wrap(~gen_infektion_v)
+```
 
 
+
+```{r Hypothesis 2 - Ethnie}
+
+## Hypothesis 2a and 2b
+
+ggplot(df_stigma_long, aes(x = gen_ethnie_v, y = gen_sds,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_ethnie_v, y = gen_sds_longterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_ethnie_v, y = gen_sds_shortterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
 
 
 ```
+
+```{r Hypothesis 3 - Workfield}
+
+## Hypothesis 3 - normal difference between all three 
+
+ggplot(df_stigma_long, aes(x = gen_beruf_v, y = gen_sds,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_beruf_v, y = gen_sds_longterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_beruf_v, y = gen_sds_shortterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+## Hypothesis 3 - Difference between essential workfield and non-essential
+
+ggplot(df_stigma_long, aes(x = gen_essential_v, y = gen_sds,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_essential_v, y = gen_sds_longterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_essential_v, y = gen_sds_shortterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+```
+
+
+
+```{r Hypothesis 4 - Alter}
+
+## Hypothesis 4 - Alter 
+
+ggplot(df_stigma_long, aes(x = gen_alter_v, y = gen_sds,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_alter_v, y = gen_sds_longterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_alter_v, y = gen_sds_shortterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+```
+
+```{r Kontrollvariable Geschlecht Vignette}
+
+## Geschlecht Vignette
+
+ggplot(df_stigma_long, aes(x = gen_sex_v, y = gen_sds,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_sex_v, y = gen_sds_longterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_sex_v, y = gen_sds_shortterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+```
+
+
+
+```{r Kontrollvariable Einstellung derzeitige Lage}
+
+## Einstellung derzeitige Lage
+
+ggplot(df_stigma_long, aes(x = gen_situation, y = gen_sds,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_situation, y = gen_sds_longterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_situation, y = gen_sds_shortterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+## Einstellung derzeitige Lage - Gesundheit
+
+ggplot(df_stigma_long, aes(x = gen_situation_gesund, y = gen_sds,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_situation_gesund, y = gen_sds_longterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_situation_gesund, y = gen_sds_shortterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+
+## Einstellung derzeitige Lage - Finanzen
+
+ggplot(df_stigma_long, aes(x = gen_situation_finanzen, y = gen_sds,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_situation_finanzen, y = gen_sds_longterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_situation_finanzen, y = gen_sds_shortterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+```
+
+
+```{r Kontrollvariable Politische Einstellung}
+
+## Politische Einstellung
+
+ggplot(df_stigma_long, aes(x = gen_politik, y = gen_sds,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_politik, y = gen_sds_longterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_politik, y = gen_sds_shortterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+```
+
+```{r Kontrollvariable Politische Einstellung}
+
+## Politische Einstellung
+
+ggplot(df_stigma_long, aes(x = gen_herkunft, y = gen_sds,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_herkunft, y = gen_sds_longterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+ggplot(df_stigma_long, aes(x = gen_herkunft, y = gen_sds_shortterm,  alpha = 0.5)) +
+  geom_jitter()  +
+  facet_wrap(~gen_infektion_v)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
