@@ -15,6 +15,7 @@ library(data.table)
 library(sem)
 library(reshape2)
 library(xtable)
+library(psych)
 ```
 
 ## Load Data Set
@@ -50,7 +51,7 @@ stigma.sds <- df_stigma_long %>%
   select(SDS100, SDS200, SDS300, SDS400, SDS500, SDS600)
 
 ### Factor Analysis
-
+stigma.sds <- na.omit(stigma.sds)
 stigma.sds.fa <- factanal(stigma.sds, factors = 2)
 
 
@@ -448,9 +449,9 @@ stigma.mc <- df_stigma_long %>%
   select(MC19100_1, MC19100_2, MC19100_3, MC19100_4, MC19100_5, MC19100_6, MC19100_7, MC19100_8, MC19100_9)
 
 ### Factor Analysis
-
+stigma.mc <- na.omit(stigma.mc)
 stigma.mc.fa <- factanal(stigma.mc, factors = 3)
-
+#stigma.ma.fa <- fa()
 
 ### Interpretation the results
 
@@ -595,23 +596,49 @@ ggplot(loadings.promax.long, aes(id, abs(Loading), fill=Loading)) +
 ```
 
 
-```{r pressure, echo=FALSE}
+###########################################################################################################################################
+##                                                                                                                                       ##
+##                                                 Descriptive Analysis                                                                  ##
+##                                                                                                                                       ##
+###########################################################################################################################################
 
 
+```{r , echo=FALSE}
+
+# Vignette Unterschiede:Kontrolle ob die verschiedenen Vignetten unterschiedlich beantwortet wurden über die Vignetten hinweg
+
+ggplot(df_stigma_long, aes(x = gen_sds, y = gen_alter_v)) +
+  geom_jitter() + 
+  facet_grid(.~ vignr)
+
+ggplot(df_stigma_long, aes(x = gen_sds, y = gen_sex_v)) +
+  geom_jitter() + 
+  facet_grid(.~ vignr)
+
+ggplot(df_stigma_long, aes(x = gen_sds, y = gen_ethnie_v)) +
+  geom_jitter() + 
+  facet_grid(.~ vignr)
+
+ggplot(df_stigma_long, aes(x = gen_sds, y = gen_beruf_v)) +
+  geom_jitter() + 
+  facet_grid(.~ vignr)
+
+ggplot(df_stigma_long, aes(x = gen_sds, y = gen_essential_v)) +
+  geom_jitter() + 
+  facet_grid(.~ vignr)
+
+ggplot(df_stigma_long, aes(x = gen_sds, y = gen_infektion_v)) +
+  geom_jitter() + 
+  facet_grid(.~ vignr)
+
+
+## Interpretation: 
+
+# Es scheint kein Vignetten Effekt vorzuliegen, anhand der descriptiven Statistik
 ```
 
 ```{r Factor analysis}
 ### Interpretation Factors
-
-
-load(url("http://dmirman.github.io/FAex.Rdata"))
-
-
-
-
-
-
-
 
 
 

@@ -38,11 +38,11 @@ head(df_origin_nolab)
 # select variables, which I need for the analysis.
 
 df_nolab <- df_origin_nolab %>%
-  select(lfdn, c_0003, c_0004, c_0005, c_0006, v_19, v_258, v_42, v_21, v_23, v_24, v_25, v_28, v_30, v_31, v_32, v_33, v_34, v_35, v_37, v_38, v_39, v_36, v_153,v_154,v_155, v_156, v_157, v_158, v_181, v_182,v_183, v_184, v_185, v_186, v_187, v_188, v_189, v_190, v_191, v_192, v_193, v_194, v_195, v_196, v_197, v_198, v_177, v_180, v_178, v_179, v_11, v_12, v_13, v_14, v_15, v_16, v_86, v_87, v_88, v_17, v_248, v_199, v_250, v_246, dispcode, duration)
+  select(lfdn, c_0003, c_0004, c_0005, c_0006, v_19, v_258, v_42, v_21, v_22, v_23, v_24, v_25, v_28, v_30, v_31, v_32, v_33, v_34, v_35, v_37, v_38, v_39, v_36, v_153,v_154,v_155, v_156, v_157, v_158, v_181, v_182,v_183, v_184, v_185, v_186, v_187, v_188, v_189, v_190, v_191, v_192, v_193, v_194, v_195, v_196, v_197, v_198, v_177, v_180, v_178, v_179, v_11, v_12, v_13, v_14, v_15, v_16, v_86, v_87, v_88, v_17, v_248, v_199, v_250, v_246, dispcode, duration)
 
 # assign column names
 
-colnames(df_nolab) <- c("id","V100", "V200", "V300", "V400", "SD100", "SD200", "SD300", "SD400", "SD500_1", "SD500_2","SD500_3", "SD500_4","SD500_5", "SD500_6","SD500_7", "SD500_8","SD500_8_o","SD500_9", "SD600_1", "SD600_2","SD600_3","SD700", "SDS100_v1", "SDS200_v1", "SDS300_v1", "SDS400_v1", "SDS500_v1", "SDS600_v1", "SDS100_v2", "SDS200_v2", "SDS300_v2", "SDS400_v2", "SDS500_v2", "SDS600_v2", "SDS100_v3", "SDS200_v3", "SDS300_v3", "SDS400_v3", "SDS500_v3", "SDS600_v3", "SDS100_v4", "SDS200_v4", "SDS300_v4", "SDS400_v4", "SDS500_v4", "SDS600_v4", "EC19100", "EC19200", "EC19300", "EC19400", "MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8", "MC19100_9", "MC19200", "IC19100", "IC19200", "IC19300", "PE100", "completed", "duration")
+colnames(df_nolab) <- c("id","V100", "V200", "V300", "V400", "SD100", "SD200", "SD300", "SD400", "SD400_o", "SD500_1", "SD500_2","SD500_3", "SD500_4","SD500_5", "SD500_6","SD500_7", "SD500_8","SD500_8_o","SD500_9", "SD600_1", "SD600_2","SD600_3","SD700", "SDS100_v1", "SDS200_v1", "SDS300_v1", "SDS400_v1", "SDS500_v1", "SDS600_v1", "SDS100_v2", "SDS200_v2", "SDS300_v2", "SDS400_v2", "SDS500_v2", "SDS600_v2", "SDS100_v3", "SDS200_v3", "SDS300_v3", "SDS400_v3", "SDS500_v3", "SDS600_v3", "SDS100_v4", "SDS200_v4", "SDS300_v4", "SDS400_v4", "SDS500_v4", "SDS600_v4", "EC19100", "EC19200", "EC19300", "EC19400", "MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8", "MC19100_9", "MC19200", "IC19100", "IC19200", "IC19300", "PE100", "completed", "duration")
 
 head(df_nolab)
 
@@ -193,7 +193,12 @@ df_nolab <- df_nolab%>%
 df_nolab <-  df_nolab %>%
   mutate(gen_schule = ifelse(SD400 >= 3 & SD400 <= 4, 1,
                                   ifelse(SD400 >= 5 & SD400 <= 6, 2,
-                                         ifelse(SD400 == 2, 3, 99))))
+                                         ifelse(SD400 == 2, 3,
+                                                ifelse(SD400 == 7 & SD400_o == "Uni abschluss", 2, 
+                                                       ifelse(SD400 == 7 & SD400_o == "Master", 2,
+                                                              ifelse(SD400 == 7 & SD400_o == "Doktor", 2,
+                                                                     ifelse(SD400 == 7 & SD400_o == "Studium", 2,
+                                                                            ifelse(SD400 == 7 & SD400_o == "Hauptschule", 1,99)))))))))
 
 count(df_nolab, SD400)
 count(df_nolab, gen_schule)
@@ -247,6 +252,7 @@ df_nolab <-  df_nolab %>%
                                                  ifelse((df_nolab$SD600_2 == 1), 2,
                                                         ifelse((df_nolab$SD600_3), 3, 99)))))))
 
+
 ###########################################################################################################################################
 
 
@@ -272,9 +278,18 @@ df_nolab$SD700[df_nolab$SD700 == 0] <- 99
 df_nolab <- df_nolab %>%
   mutate(gen_herkunft = ifelse((gen_staat == 1) & (SD700 == 2), 1, 
                                ifelse((gen_staat >= 1) & (gen_staat < 7) & (SD700 == 1), 2,
-                                      ifelse((gen_staat > 1) & (gen_staat < 7) & (SD700 == 2), 2, 99))))
+                                      ifelse((gen_staat > 1) & (gen_staat < 7) & (SD700 == 2), 2, 
+                                             ifelse((gen_staat == 99) & (SD700 == 1), 2, 99 )))))
 
-# Kontrolle: 
+## Anmerkung: 
+
+# Deutsche Staatsangehörigkeit X Geburtsort Eltern Missing = 5 Fälle --> unklar
+# Staatsangehörigkeit Missing X Geburtsort Eltern Außerhalb = 2 Fälle --> aufjedenfall migrationshintergund
+# Staatsangehörigkeit Missing X Geburtsort Eltern Deutschland = 13 Fälle --> unklar
+# Staatsangehörigkeit Missing X Geburtsort Eltern Missing = 1 Fälle --> unklar
+ 
+
+## Kontrolle: 
 
 table(df_nolab$gen_staat, df_nolab$SD700)
 count(df_nolab, gen_herkunft)
@@ -302,6 +317,25 @@ count(df_nolab, EC19300)
 
 df_nolab$EC19400[df_nolab$EC19400 == 0] <- 99
 count(df_nolab, EC19400)
+
+###########################################################################################################################################
+
+### Einstellung Maßnahmen MC19100_1 - MC19100_9
+
+## Einstellung Maßnahmen: Schließung von Schulen und Kindergärten - MC19100_1
+
+df_nolab <- df_nolab %>%
+  mutate(MC19100_1= ifelse(MC19100_1 == 0 & MC19100_2 == 0 & MC19100_3 == 0 & MC19100_4 == 0 & MC19100_5 == 0 & MC19100_6 == 0 & MC19100_7 == 0 & MC19100_8 == 0 & MC19100_9 == 0,99, 
+                            ifelse(MC19100_1 == 1, 1, 0)))
+
+df_nolab$MC19100_2[df_nolab$MC19100_1 == 99] <- 99
+df_nolab$MC19100_3[df_nolab$MC19100_1 == 99] <- 99
+df_nolab$MC19100_4[df_nolab$MC19100_1 == 99] <- 99
+df_nolab$MC19100_5[df_nolab$MC19100_1 == 99] <- 99
+df_nolab$MC19100_6[df_nolab$MC19100_1 == 99] <- 99
+df_nolab$MC19100_7[df_nolab$MC19100_1 == 99] <- 99
+df_nolab$MC19100_8[df_nolab$MC19100_1 == 99] <- 99
+df_nolab$MC19100_9[df_nolab$MC19100_1 == 99] <- 99
 
 ###########################################################################################################################################
 
@@ -388,6 +422,15 @@ df_nolab <- df_nolab %>%
 df_nolab <- df_nolab %>%
   mutate(completed = ifelse(completed == 31, 1, 0))
 
+count(df_nolab, MC19100_1)
+count(df_nolab, MC19100_2)
+count(df_nolab, MC19100_3)
+count(df_nolab, MC19100_4)
+count(df_nolab, MC19100_5)
+count(df_nolab, MC19100_6)
+count(df_nolab, MC19100_7)
+count(df_nolab, MC19100_8)
+count(df_nolab, MC19100_9)
 ```
 
 ###########################################################################################################################################
@@ -440,11 +483,11 @@ df_nolab <- df_nolab %>%
 
 ### Essential Worker
 
-# 1 = Non-Essential Worker
-# 0 = Essential worker
+# 0 = Non-Essential Worker
+# 1 = Essential worker
 
 df_nolab <- df_nolab %>%
-  mutate(essential_v1 = ifelse(grepl("Home Office", df_nolab$V100), 1, 0))
+  mutate(essential_v1 = ifelse(grepl("Home Office", df_nolab$V100), 0, 1))
 
 ### Covid-19
 
@@ -504,11 +547,11 @@ df_nolab <- df_nolab %>%
 
 ### Essential Worker
 
-# 1 = Non-Essential Worker
-# 0 = Essential worker
+# 0 = Non-Essential Worker
+# 1 = Essential worker
 
 df_nolab <- df_nolab %>%
-  mutate(essential_v2 = ifelse(grepl("Home Office", df_nolab$V200), 1, 0))
+  mutate(essential_v2 = ifelse(grepl("Home Office", df_nolab$V200), 0, 1))
 
 ### Covid-19
 
@@ -567,11 +610,11 @@ df_nolab <- df_nolab %>%
 
 ### Essential Worker
 
-# 1 = Non-Essential Worker
-# 0 = Essential worker
+# 0 = Non-Essential Worker
+# 1 = Essential worker
 
 df_nolab <- df_nolab %>%
-  mutate(essential_v3 = ifelse(grepl("Home Office", df_nolab$V300), 1, 0))
+  mutate(essential_v3 = ifelse(grepl("Home Office", df_nolab$V300), 0, 1))
 
 ### Covid-19
 
@@ -698,6 +741,16 @@ colnames(df_stigma_long) <- c("id","V100", "V200", "V300", "V400", "SD100", "SD2
 ## Social Distance Scale
 
 ```{r Index Variable -  Social Distance Scale}
+###########################################################################################################################################
+
+### Social Distance - 0 to NAs
+
+df_stigma_long$SDS100[df_stigma_long$SDS100 == 0] <- NA
+df_stigma_long$SDS200[df_stigma_long$SDS200 == 0] <- NA
+df_stigma_long$SDS300[df_stigma_long$SDS300 == 0] <- NA
+df_stigma_long$SDS400[df_stigma_long$SDS400 == 0] <- NA
+df_stigma_long$SDS500[df_stigma_long$SDS500 == 0] <- NA
+df_stigma_long$SDS600[df_stigma_long$SDS600 == 0] <- NA
 
 ## Explanation 
 
@@ -714,7 +767,7 @@ df_stigma_long <- df_stigma_long %>%
   mutate(gen_sds = (SDS100 + SDS200 + SDS300 + SDS400 + SDS500 + SDS600)/6) %>%
   mutate_if(is.numeric, ~round(., 2))
 
-df_stigma_long$gen_sds
+# df_stigma_long$gen_sds
 
 
 ## Second Index Variable - including SDS100 & SDS200 questions
@@ -723,7 +776,7 @@ df_stigma_long <- df_stigma_long %>%
   mutate(gen_sds_longterm = (SDS100 + SDS200)/2) %>%
   mutate_if(is.numeric, ~round(., 2))
 
-df_stigma_long$gen_sds_longterm
+# df_stigma_long$gen_sds_longterm
 
 
 ## Third Index Variable - including SDS300, SDS400, SDS500 & SDS600 questions
@@ -732,14 +785,14 @@ df_stigma_long <- df_stigma_long %>%
   mutate(gen_sds_shortterm = (SDS300 + SDS400 + SDS500 + SDS600)/4) %>%
   mutate_if(is.numeric, ~round(., 2))
 
-df_stigma_long$gen_sds_shortterm
+# df_stigma_long$gen_sds_shortterm
 
 
 ```
 
 ## Einstellung Lage 
 
-```{r Index Variable -  Social Distance Scale}
+```{r Index Variable -  Einstellungen Pandemie}
 
 ## Explanation 
 
@@ -756,7 +809,7 @@ df_stigma_long <- df_stigma_long %>%
   mutate(gen_situation = (EC19100 + EC19200 + EC19300 + EC19400)/4) %>%
   mutate_if(is.numeric, ~round(., 2))
 
-df_stigma_long$gen_situation
+# df_stigma_long$gen_situation
 
 
 ## Second Index Variable - including EC19200 + EC19300 questions
@@ -765,7 +818,7 @@ df_stigma_long <- df_stigma_long %>%
   mutate(gen_situation_gesund = (EC19200 + EC19300)/2) %>%
   mutate_if(is.numeric, ~round(., 2))
 
-df_stigma_long$gen_situation_gesund
+# df_stigma_long$gen_situation_gesund
 
 
 ## Third Index Variable - including EC19100 + EC19400 questions
@@ -774,7 +827,7 @@ df_stigma_long <- df_stigma_long %>%
   mutate(gen_situation_finanzen = (EC19100 + EC19400)/2) %>%
   mutate_if(is.numeric, ~round(., 2))
 
-df_stigma_long$gen_situation_finanzen
+# +üdf_stigma_long$gen_situation_finanzen
 
 
 ```
@@ -783,7 +836,7 @@ df_stigma_long$gen_situation_finanzen
 
 ## Einstellung Maßnahmen
 
-```{r Index Variable -  Social Distance Scale}
+```{r Index Variable -  Einstellung Maßnahmen}
 
 ## Explanation 
 
