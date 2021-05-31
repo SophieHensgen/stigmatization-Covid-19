@@ -86,7 +86,7 @@ lm_hyp1_sds_lt_long <- lm(gen_sds_longterm ~ gen_infektion_v + SD100 +SD200 + I(
  stargazer(lm_hyp1_sds_short, lm_hyp1_sds_long, lm_hyp1_sds_st_short, lm_hyp1_sds_st_long, lm_hyp1_sds_lt_short, lm_hyp1_sds_lt_long,
        title = "Regression Table - Linear Regression",
        label="tab1",
-       covariate.labels = c("Infektion", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
+       #covariate.labels = c("Infektion", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
        dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
        #table.placement = "H",
        column.labels = c("M1", "M2", "M3", "M4", "M5", "M6"),
