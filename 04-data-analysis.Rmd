@@ -17,6 +17,7 @@ library(reshape2)
 library(xtable)
 library(psych)
 library(stargazer)
+library(jtools)
 ```
 
 ## Load Data Set
@@ -98,10 +99,31 @@ lm_hyp1_sds_lt_long <- lm(gen_sds_longterm ~ gen_infektion_v + SD100 +SD200 + I(
  
 ```
 
+## Coef Plot - Hypothesis 1
+```{r Hypothesis 1 - Coef Plot}
 
-## Hypothesis 2a
+## Complete SDS
 
-```{r Hypothesis 2a, include = FALSE}
+plot_summs(lm_hyp1_sds_short, lm_hyp1_sds_long, scale = TRUE, plot.distributions = FALSE)
+
+## Short Term SDS
+
+plot_summs(lm_hyp1_sds_st_short, lm_hyp1_sds_st_long, scale = TRUE, plot.distributions = FALSE)
+
+## Long Term SDS
+
+plot_summs(lm_hyp1_sds_lt_short, lm_hyp1_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
+
+## Compare all full models
+ 
+plot_summs(lm_hyp1_sds_long, lm_hyp1_sds_st_long, lm_hyp1_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
+
+```
+
+
+## Hypothesis 2
+
+```{r Hypothesis 2, include = FALSE}
 
 lm_hyp2_sds_short <- lm(gen_sds ~ gen_infektion_v + gen_ethnie_v, df_stigma_long)
 lm_hyp2_sds_int <- lm(gen_sds ~ gen_infektion_v + gen_ethnie_v + gen_infektion_v*gen_ethnie_v, df_stigma_long)
@@ -157,6 +179,26 @@ lm_hyp2_sds_lt_long <- lm(gen_sds_longterm ~ gen_infektion_v + gen_ethnie_v+ gen
 
 ```
 
+## Coef Plot - Hypothesis 2
+```{r Hypothesis 2 - Coef Plot}
+
+## Complete SDS
+
+plot_summs(lm_hyp2_sds_short, lm_hyp2_sds_long, scale = TRUE, plot.distributions = FALSE)
+
+## Short Term SDS
+
+plot_summs(lm_hyp2_sds_st_short, lm_hyp2_sds_st_long, scale = TRUE, plot.distributions = FALSE)
+
+## Long Term SDS
+
+plot_summs(lm_hyp2_sds_lt_short, lm_hyp2_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
+
+## Compare all full models
+ 
+plot_summs(lm_hyp2_sds_long, lm_hyp2_sds_st_long, lm_hyp2_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
+
+```
 
 ## Hypothesis 3
 
@@ -218,6 +260,27 @@ lm_hyp3_sds_lt_long <- lm(gen_sds_longterm ~ gen_infektion_v + gen_beruf_v + gen
 
 ```
 
+## Coef Plot - Hypothesis 3 
+
+```{r Hypothesis 3 - Coef Plot}
+
+## Complete SDS
+
+plot_summs(lm_hyp3_sds_short, lm_hyp3_sds_long, scale = TRUE, plot.distributions = FALSE)
+
+## Short Term SDS
+
+plot_summs(lm_hyp3_sds_st_short, lm_hyp3_sds_st_long, scale = TRUE, plot.distributions = FALSE)
+
+## Long Term SDS
+
+plot_summs(lm_hyp3_sds_lt_short, lm_hyp3_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
+
+## Compare all full models
+ 
+plot_summs(lm_hyp3_sds_long, lm_hyp3_sds_st_long, lm_hyp3_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
+
+```
 
 ## Hypothesis 4
 
@@ -277,7 +340,27 @@ lm_hyp4_sds_lt_long <- lm(gen_sds_longterm ~ gen_infektion_v + gen_alter_v + gen
 ```
 
 
+## Coef Plot - Hypothesis 4
 
+```{r Hypothesis 4 - Coef Plot}
+
+## Complete SDS
+
+plot_summs(lm_hyp4_sds_short, lm_hyp4_sds_long, scale = TRUE, plot.distributions = FALSE)
+
+## Short Term SDS
+
+plot_summs(lm_hyp4_sds_st_short, lm_hyp4_sds_st_long, scale = TRUE, plot.distributions = FALSE)
+
+## Long Term SDS
+
+plot_summs(lm_hyp4_sds_lt_short, lm_hyp4_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
+
+## Compare all full models
+ 
+plot_summs(lm_hyp4_sds_long, lm_hyp4_sds_st_long, lm_hyp4_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
+
+```
 
 
 
