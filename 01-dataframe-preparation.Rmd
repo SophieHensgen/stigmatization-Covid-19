@@ -380,8 +380,8 @@ count(df_nolab, IC19300)
 df_nolab <- df_nolab %>%
   mutate(gen_impfung = ifelse((IC19200 == 1), 1,
                               ifelse((IC19200 == 2), 1,
-                                     ifelse((IC19200 == 3) & (IC19300 == 1), 2,
-                                            ifelse((IC19200 == 3) & (IC19300 == 2), 2,
+                                     ifelse((IC19200 == 3) & (IC19300 == 1), 0,
+                                            ifelse((IC19200 == 3) & (IC19300 == 2), 0,
                                                    ifelse((IC19200 == 3) & (IC19300 == 3), 1,
                                                           ifelse((IC19200 == 3) & (IC19300 == 4), 1, 99)))))))
 

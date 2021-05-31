@@ -16,6 +16,7 @@ library(sem)
 library(reshape2)
 library(xtable)
 library(psych)
+library(stargazer)
 ```
 
 ## Load Data Set
@@ -29,11 +30,20 @@ df_stigma_long <- read_csv("df_stigma_long.csv")
 
 ## Descriptive
 
-```{r descriptive social demo, include = FALSE}
+```{r descriptive social demo}
 
-### Geschlecht - SD100
+### Summary 
 
-summary(df_stigma_long)
+# soon subset of the data - only important variables should be included, such as age, sex etc.
+
+# Frage:
+#   Welche Werte sollten am besten abgefragt werden? 
+#   -   Min und Max
+#   -   Mean
+#   -   N
+#   -   Standard Deviation
+
+stargazer(data.frame(df_stigma_wide), type = "latex", summary = TRUE, out = "summary-1.tex")
 ```
 
 ###########################################################################################################################################
