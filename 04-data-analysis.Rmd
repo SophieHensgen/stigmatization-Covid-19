@@ -18,6 +18,11 @@ library(xtable)
 library(psych)
 library(stargazer)
 library(jtools)
+library(plm)
+library(lmtest)
+library(Matrix)
+library(lme4)
+library(stargazer)
 ```
 
 ## Load Data Set
@@ -65,6 +70,58 @@ df_stigma_long$gen_beruf_v <- relevel(df_stigma_long$gen_beruf_v, ref = 3)
 
 ```
 
+###########################################################################################################################################
+##                                                                                                                                       ##
+##                                                 Regression - Random Intercept                                                         ##
+##                                                                                                                                       ##
+###########################################################################################################################################
+
+## Cluster Robust Standard Error Test
+
+```{r Cluster Robust Standard Error Test, include = FALSE}
+
+## Random Intercept Model - SDS Shortterm
+
+ranin_m1 <-  lmer(gen_sds_shortterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik + (1 | vignr), data = df_stigma_long)
+ranin_m2 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + (1 | vignr), data = df_stigma_long)
+ranin_m3 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | vignr), data = df_stigma_long)
+
+ stargazer(ranin_m1, ranin_m2, ranin_m3, 
+       title = "Regression Table - Random Intercept Model",
+       label="tab1",
+       #covariate.labels = c("Infektion", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
+       #dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
+       #table.placement = "H",
+       column.labels = c("M1", "M2", "M3"),
+       model.numbers = FALSE,
+       header=FALSE, 
+       font.size= "footnotesize", 
+       column.sep.width = "-5pt", 
+       keep.stat = c("rsq", "n", "ll", "lr", "aic", "bic"))
+```
+
+```{r Cluster Robust Standard Error Test, include = FALSE}
+
+## Random Intercept Model - SDS Shortterm
+
+ranin_m1 <-  lmer(gen_sds_longterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik + (1 | vignr), data = df_stigma_long)
+ranin_m2 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + (1 | vignr), data = df_stigma_long)
+ranin_m3 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | vignr), data = df_stigma_long)
+
+ stargazer(ranin_m1, ranin_m2, ranin_m3, 
+       title = "Regression Table - Random Intercept Model",
+       label="tab2",
+       #covariate.labels = c("Infektion", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
+       #dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
+       #table.placement = "H",
+       column.labels = c("M1", "M2", "M3"),
+       model.numbers = FALSE,
+       header=FALSE, 
+       font.size= "footnotesize", 
+       column.sep.width = "-5pt", 
+       keep.stat = c("rsq", "n", "ll", "lr", "aic", "bic"))
+```
+
 
 ###########################################################################################################################################
 ##                                                                                                                                       ##
@@ -72,7 +129,67 @@ df_stigma_long$gen_beruf_v <- relevel(df_stigma_long$gen_beruf_v, ref = 3)
 ##                                                                                                                                       ##
 ###########################################################################################################################################
 
+## Cluster Robust Standard Error Test
 
+```{r Cluster Robust Standard Error Test, include = FALSE}
+
+## Cluster Robust Standard Error Test
+m1 <- lm(gen_sds ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik, data = df_stigma_long)
+pm1 <- plm(gen_sds ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik, data = df_stigma_long, model = "pooling", index = "vignr")
+
+# compute Stata like df-adjustment
+G <- length(unique(df_stigma_long$vignr))
+N <- length(df_stigma_long$vignr)
+dfa <- (G/(G - 1)) * (N - 1)/pm1$df.residual
+ 
+# display with cluster VCE and df-adjustment
+firm_c_vcov <- dfa * vcovHC(pm1, type = "HC0", cluster = "group", adjust = T)
+coeftest(pm1, vcov = firm_c_vcov)
+
+#waldtest(pm1, vcov = firm_c_vcov, test = "F")
+
+## Random Intercept Model
+
+gpa_mixed <-  lmer(gen_sds ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik + (1 | vignr), data = df_stigma_long)
+summary(gpa_mixed)
+
+ stargazer(m1, pm1, gpa_mixed, 
+       title = "Regression Table - Linear Regression",
+       label="tab1",
+       #covariate.labels = c("Infektion", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
+       #dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
+       #table.placement = "H",
+       #column.labels = c("M1"),
+       model.numbers = FALSE,
+       header=FALSE, 
+       font.size= "footnotesize", 
+       column.sep.width = "-5pt", 
+       keep.stat = c("rsq", "n", "ll", "lr", "aic", "bic"))
+```
+```{r Cluster Robust Standard Error Test, include = FALSE}
+
+## Cluster Robust Standard Error Test
+m1 <- lm(gen_sds ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v, data = df_stigma_long)
+pm1 <- plm(gen_sds ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v, data = df_stigma_long, model = "pooling", index = "vignr")
+
+## Random Intercept Model
+
+gpa_mixed <-  lmer(gen_sds ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | vignr), data = df_stigma_long)
+summary(gpa_mixed)
+
+ stargazer(m1, pm1, gpa_mixed, 
+       title = "Regression Table - Linear Regression",
+       label="tab1",
+       #covariate.labels = c("Infektion", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
+       #dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
+       #table.placement = "H",
+       #column.labels = c("M1"),
+       model.numbers = FALSE,
+       header=FALSE, 
+       font.size= "footnotesize", 
+       column.sep.width = "-5pt", 
+       keep.stat = c("adj.rsq", "n"))
+```
 ## Hypothesis 1
 
 ```{r Hypothesis 1, include = FALSE}
@@ -364,7 +481,26 @@ plot_summs(lm_hyp4_sds_long, lm_hyp4_sds_st_long, lm_hyp4_sds_lt_long, scale = T
 
 
 
+## Hypothesis 4
 
+```{r Hypothesis 4}
+
+lm_test <- lm(gen_sds ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v, df_stigma_long)
+lm_test_short <- lm(gen_sds_shortterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v, df_stigma_long)
+lm_test_long <- lm(gen_sds_longterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v, df_stigma_long)
+
+summary(lm_test)
+summary(lm_test_short)
+summary(lm_test_long)
+
+lm_test_int <- lm(gen_sds ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v, df_stigma_long)
+lm_test_short_int <- lm(gen_sds_shortterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v, df_stigma_long)
+lm_test_long_int <- lm(gen_sds_longterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v, df_stigma_long)
+
+summary(lm_test_int)
+summary(lm_test_short_int)
+summary(lm_test_long_int)
+```
 
 
 

@@ -798,10 +798,6 @@ df_stigma_long <- df_stigma_long %>%
 
 # I am going to do 3 Index Variables.
 #   1. One including all of the 4 questions
-#   2. One including only the ones regarding health
-#      -->  According to the factor analysis, being health question were answered similarly, which is why they should create a index variable
-#   3. One including only the ones regarding the financial situation
-#      -->  According to the factor analysis, these two question seemed to be answered similarly, which is why they should create a index variable
 
 ## First Index Variable - including all 4 questions
 
@@ -810,25 +806,6 @@ df_stigma_long <- df_stigma_long %>%
   mutate_if(is.numeric, ~round(., 2))
 
 # df_stigma_long$gen_situation
-
-
-## Second Index Variable - including EC19200 + EC19300 questions
-
-df_stigma_long <- df_stigma_long %>%
-  mutate(gen_situation_gesund = (EC19200 + EC19300)/2) %>%
-  mutate_if(is.numeric, ~round(., 2))
-
-# df_stigma_long$gen_situation_gesund
-
-
-## Third Index Variable - including EC19100 + EC19400 questions
-
-df_stigma_long <- df_stigma_long %>%
-  mutate(gen_situation_finanzen = (EC19100 + EC19400)/2) %>%
-  mutate_if(is.numeric, ~round(., 2))
-
-# +üdf_stigma_long$gen_situation_finanzen
-
 
 ```
 
@@ -840,9 +817,45 @@ df_stigma_long <- df_stigma_long %>%
 
 ## Explanation 
 
-# Unclear
+# I am going to create 4 Index Variables.
+#   1. One including MC19100_1, MC19100_2, MC19100_4 & MC19100_7
+#      -->  According to the factor analysis, closing of schools, no private events, closing physical activity centers and ban off sport events are loading on the
+#           same factor
+#   2. One including MC19100_3, MC19100_5 & MC19100_6
+#      -->  According to the factor analysis, closing of freetime activities (theater or movies), as well as limiting contact to other people and travels are
+#           loading on the same factor
+#   3. One including MC19100_8
+#      -->  According to the factor analysis, closing bars and clubs is loading on one factor. 
+#   4. One including MC19100_9
+#      -->  MC19100_9 was exclusiv in the survey, which is the reason, why it does not make sense to include it, into the factor analysis. 
+
+## First Index Variable - including MC19100_1, MC19100_2, MC19100_4 & MC19100_7
+
+df_stigma_long <- df_stigma_long %>%
+  mutate(gen_mc_largegroups = (MC19100_1 + MC19100_2 + MC19100_4 + MC19100_7)/4) %>%
+  mutate_if(is.numeric, ~round(., 2))
 
 
+## Second Index Variable - including MC19100_3, MC19100_5 & MC19100_6
+df_stigma_long <- df_stigma_long %>%
+  mutate(gen_mc_smallgroups = (MC19100_3 + MC19100_5 + MC19100_6)/3) %>%
+  mutate_if(is.numeric, ~round(., 2))
+
+
+## Third Index Variable - including MC19100_8
+
+df_stigma_long <- df_stigma_long %>%
+  mutate(gen_mc_bars = MC19100_8) %>%
+  mutate_if(is.numeric, ~round(., 2))
+
+
+## Fourth Index Variable - including MC19100_9
+
+df_stigma_long <- df_stigma_long %>%
+  mutate(gen_mc_none = MC19100_9) %>%
+  mutate_if(is.numeric, ~round(., 2))
+
+# df_stigma_long$gen_situation_finanzen
 
 
 ```

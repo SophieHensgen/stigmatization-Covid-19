@@ -30,7 +30,7 @@ df_stigma_long <- read_csv("df_stigma_long.csv")
 
 ## Descriptive
 
-```{r descriptive social demo}
+```{r descriptive social demo, include = FALSE}
 
 ### Summary 
 
@@ -44,6 +44,56 @@ df_stigma_long <- read_csv("df_stigma_long.csv")
 #   -   Standard Deviation
 
 stargazer(data.frame(df_stigma_wide), type = "latex", summary = TRUE, out = "summary-1.tex")
+```
+
+```{r normal distribution - dependent variable}
+
+### Normal Distribution
+
+hist(df_stigma_long$gen_sds)
+hist(df_stigma_long$gen_sds_longterm)
+hist(df_stigma_long$gen_sds_shortterm)
+
+hist(df_stigma_long$SDS100)
+hist(df_stigma_long$SDS200)
+hist(df_stigma_long$SDS300)
+hist(df_stigma_long$SDS400)
+hist(df_stigma_long$SDS500)
+hist(df_stigma_long$SDS600)
+
+
+### Interpretation
+
+# we see spikes at 1, 2, 3 and 4 as predicted
+# The index variable including all 4 Variables has a similar look as a normal distributon, however, 1 is much higher than the other values.
+# This is similar to the other index variables and the individual variables
+
+# Nochmal nachfragen
+```
+
+```{r Vignette Differences}
+
+### Vignette Mean Differences
+
+df.test <- na.omit(df_stigma_long)
+
+df.test %>%
+  group_by(vignr) %>%
+  summarize(meansds = mean(gen_sds))
+
+df.test %>%
+  group_by(vignr) %>%
+  summarize(meanssds_long = mean(gen_sds_shortterm))
+
+df.test %>%
+  group_by(vignr) %>%
+  summarize(meanssds_long = mean(gen_sds_longterm))
+
+### Interpretation
+
+# the mean of the individual Vignettes are quite similar and therefore should not be a problem
+
+# Nochmal nachfragen
 ```
 
 ###########################################################################################################################################
@@ -260,6 +310,14 @@ stigma.ec <- df_stigma_long %>%
   select(EC19100, EC19200, EC19300, EC19400)
 
 ### Factor Analysis
+
+fa(stigma.ec,nfactors = 2,rotate = "oblimin", fm="minres")
+fa.parallel(stigma.ec, fm = "minres", fa = "fa")
+
+# Interpretation: 
+
+# After inspection of the graph is clear, that the variables only load on one factor.
+
 stigma.ec <- na.omit(stigma.ec)
 stigma.ec.fa <- factanal(stigma.ec, factors = 1)
 
@@ -342,9 +400,10 @@ abline(h = 0, v = 0)
    #  factors, which helps interpret them. From a mathematical viewpoint, there is no difference between a rotated and unrotated matrix. The fitted model is the 
    #  same, the uniquenesses are the same, and the proportion of variance explained is the same.
 
-
-# In the graph we see, that EC19100 and EC10400 have similar values. EC19200 and EC19300 have similar values. Which makes sense, because 100 and 400 ask after financial situations and the others after health. In general, they have all similar values.
-# The question is, should one build an index out of all of them or split them up?
+# Interpretation:
+   #  In the graph we see, that EC19100 and EC10400 have similar values. EC19200 and EC19300 have similar values. Which makes sense, because 100 and 400 ask after
+   #  financial situations and the others after health. In general, they have all similar values.
+   #  However, the initial factor analysis showed, that all variables only load on one factor, which is why, I am only going to create one Index Variable.
 
 ```
 
@@ -456,7 +515,7 @@ ggplot(loadings.ec.promax.long, aes(id, abs(Loading), fill=Loading)) +
 ```{r Factor analysis - Maßnahmen Einstellungen}
 
 stigma.mc <- df_stigma_long %>%
-  select(MC19100_1, MC19100_2, MC19100_3, MC19100_4, MC19100_5, MC19100_6, MC19100_7, MC19100_8, MC19100_9)
+  select(MC19100_1, MC19100_2, MC19100_3, MC19100_4, MC19100_5, MC19100_6, MC19100_7, MC19100_8)
 
 ### Factor Analysis
 stigma.mc <- na.omit(stigma.mc)
@@ -491,7 +550,7 @@ str(stigma.mc.fa$loadings)
 class(stigma.mc.fa$loadings)
 
 loadings.og <- xtable(unclass(stigma.mc.fa$loadings)) # putting loadings into data frame
-loadings.og$id <- c("MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8", "MC19100_9") # add id
+loadings.og$id <- c("MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8") # add id
 
 loadings.og.long <- melt(loadings.og, id="id", 
                    measure=c("Factor1", "Factor2", "Factor3"), 
@@ -519,7 +578,7 @@ str(stigma.mc.fa.none$loadings)
 class(stigma.mc.fa.none$loadings)
 
 loadings.none <- xtable(unclass(stigma.mc.fa.none$loadings)) # putting loadings into data frame
-loadings.none$id <- c("MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8", "MC19100_9") # add id
+loadings.none$id <- c("MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8") # add id
 
 loadings.none.long <- melt(loadings.none, id="id", 
                    measure=c("Factor1", "Factor2", "Factor3"), 
@@ -546,7 +605,7 @@ str(stigma.mc.fa.varimax$loadings)
 class(stigma.mc.fa.varimax$loadings)
 
 loadings.varimax <- xtable(unclass(stigma.mc.fa.varimax$loadings)) # putting loadings into data frame
-loadings.varimax$id <- c("MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8", "MC19100_9") # add id
+loadings.varimax$id <- c("MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8") # add id
 
 loadings.varimax.long <- melt(loadings.varimax, id="id", 
                    measure=c("Factor1", "Factor2", "Factor3"), 
@@ -573,7 +632,7 @@ str(stigma.mc.fa.promax$loadings)
 class(stigma.mc.fa.promax$loadings)
 
 loadings.promax <- xtable(unclass(stigma.mc.fa.promax$loadings)) # putting loadings into data frame
-loadings.promax$id <- c("MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8", "MC19100_9") # add id
+loadings.promax$id <- c("MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8") # add id
 
 loadings.promax.long <- melt(loadings.promax, id="id", 
                    measure=c("Factor1", "Factor2", "Factor3"), 
@@ -600,9 +659,11 @@ ggplot(loadings.promax.long, aes(id, abs(Loading), fill=Loading)) +
    #  factors, which helps interpret them. From a mathematical viewpoint, there is no difference between a rotated and unrotated matrix. The fitted model is the 
    #  same, the uniquenesses are the same, and the proportion of variance explained is the same.
 
+# Interpretation:
+   #  According to the factor analysis and the Kaiser's rule, there should be three factors. 
+   #  Through the last rotation i would suggest combining 1, 2, 4 and 7. Also 3, 5 and 6. Number 8 loads almost completely on one factor alone, which is why it
+   #  should get one exclusive factor. The same for 9, which is not in this factor analysis, as it was exclusiv in the survey and would not make any sense.
 
-# According to the factor analysis and the Kaiser's rule, there should be three factors. 
-# through the last rotation i would suggest combining 1, 2, 4 and 7. Also 3, 5 and 6. I am unsure about 9 and 8. As 9 is the complete opposite. And also was exclusive in the survey.
 ```
 
 
