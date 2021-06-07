@@ -54,6 +54,7 @@ df_stigma_long$gen_impfung <- as.factor(df_stigma_long$gen_impfung)
 df_stigma_long$gen_bund <- as.factor(df_stigma_long$gen_bund)
 df_stigma_long$gen_sex_v <- as.factor(df_stigma_long$gen_sex_v)
 df_stigma_long$gen_essential_v <- as.factor(df_stigma_long$gen_essential_v)
+df_stigma_long$SD100 <- as.factor(df_stigma_long$SD100)
 
 ```
 
@@ -82,33 +83,30 @@ df_stigma_long$gen_beruf_v <- relevel(df_stigma_long$gen_beruf_v, ref = 3)
 
 ## Random Intercept Model - SDS Shortterm
 
-ranin_m1 <-  lmer(gen_sds_shortterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik + (1 | vignr), data = df_stigma_long)
-ranin_m2 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + (1 | vignr), data = df_stigma_long)
-ranin_m3 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | vignr), data = df_stigma_long)
+ranin_short_m1 <-  lmer(gen_sds_shortterm ~ 1 + (1 | id), data = df_stigma_long)
+ranin_short_m2 <-  lmer(gen_sds_shortterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + (1 | id), data = df_stigma_long)
+ranin_short_m3 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_bund + gen_schule + gen_herkunft + (1 | id), data = df_stigma_long)
+ranin_short_m4 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_bund + gen_schule + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + (1 | id), data = df_stigma_long)
+ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_bund + gen_schule + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
 
- stargazer(ranin_m1, ranin_m2, ranin_m3, 
-       title = "Regression Table - Random Intercept Model",
-       label="tab1",
-       #covariate.labels = c("Infektion", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
-       #dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
-       #table.placement = "H",
-       column.labels = c("M1", "M2", "M3"),
-       model.numbers = FALSE,
-       header=FALSE, 
-       font.size= "footnotesize", 
-       column.sep.width = "-5pt", 
-       keep.stat = c("rsq", "n", "ll", "lr", "aic", "bic"))
 ```
 
 ```{r Cluster Robust Standard Error Test, include = FALSE}
 
-## Random Intercept Model - SDS Shortterm
+## Random Intercept Model - SDS LongTerm
 
-ranin_m1 <-  lmer(gen_sds_longterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik + (1 | vignr), data = df_stigma_long)
-ranin_m2 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + (1 | vignr), data = df_stigma_long)
-ranin_m3 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | vignr), data = df_stigma_long)
+ranin_long_m1 <-  lmer(gen_sds_longterm ~ 1 + (1 | id), data = df_stigma_long)
+ranin_long_m2 <-  lmer(gen_sds_longterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + (1 | id), data = df_stigma_long)
+ranin_long_m3 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_bund + gen_schule + gen_herkunft + (1 | id), data = df_stigma_long)
+ranin_long_m4 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_bund + gen_schule + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + (1 | id), data = df_stigma_long)
+ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_bund + gen_schule + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
 
- stargazer(ranin_m1, ranin_m2, ranin_m3, 
+```
+
+```{r Table for LaTeX, include = FALSE}
+
+## Table for LaTeX
+ stargazer(ranin_short_m1, ranin_short_m2, ranin_short_m3, ranin_short_m4, ranin_short_m5,ranin_long_m1, ranin_long_m2, ranin_long_m3, ranin_long_m4, ranin_long_m5, 
        title = "Regression Table - Random Intercept Model",
        label="tab2",
        #covariate.labels = c("Infektion", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
@@ -119,13 +117,11 @@ ranin_m3 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_
        header=FALSE, 
        font.size= "footnotesize", 
        column.sep.width = "-5pt", 
-       keep.stat = c("rsq", "n", "ll", "lr", "aic", "bic"))
+       keep.stat = c("n", "ll", "aic", "bic"))
 ```
-
-
 ###########################################################################################################################################
 ##                                                                                                                                       ##
-##                                                 Linear Models                                                                         ##
+##                                                 Test - Cluster Robust Standard Error Test                                             ##
 ##                                                                                                                                       ##
 ###########################################################################################################################################
 
@@ -166,7 +162,9 @@ summary(gpa_mixed)
        column.sep.width = "-5pt", 
        keep.stat = c("rsq", "n", "ll", "lr", "aic", "bic"))
 ```
-```{r Cluster Robust Standard Error Test, include = FALSE}
+
+
+```{r Comparison different Models, include = FALSE}
 
 ## Cluster Robust Standard Error Test
 m1 <- lm(gen_sds ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v, data = df_stigma_long)
@@ -189,301 +187,33 @@ summary(gpa_mixed)
        font.size= "footnotesize", 
        column.sep.width = "-5pt", 
        keep.stat = c("adj.rsq", "n"))
-```
-## Hypothesis 1
-
-```{r Hypothesis 1, include = FALSE}
-
-lm_hyp1_sds_short <- lm(gen_sds ~ gen_infektion_v, df_stigma_long)
-lm_hyp1_sds_long <- lm(gen_sds ~ gen_infektion_v + SD100 + SD200 + I(SD200^2) + gen_schule + gen_staat + gen_politik, df_stigma_long)
-lm_hyp1_sds_st_short <- lm(gen_sds_shortterm ~ gen_infektion_v, df_stigma_long)
-lm_hyp1_sds_st_long <- lm(gen_sds_shortterm ~ gen_infektion_v + SD100 + SD200 + I(SD200^2) + gen_schule + gen_staat + gen_politik, df_stigma_long)
-lm_hyp1_sds_lt_short <- lm(gen_sds_longterm ~ gen_infektion_v, df_stigma_long)
-lm_hyp1_sds_lt_long <- lm(gen_sds_longterm ~ gen_infektion_v + SD100 +SD200 + I(SD200^2) + gen_schule + gen_staat + gen_politik, df_stigma_long)
-
- stargazer(lm_hyp1_sds_short, lm_hyp1_sds_long, lm_hyp1_sds_st_short, lm_hyp1_sds_st_long, lm_hyp1_sds_lt_short, lm_hyp1_sds_lt_long,
-       title = "Regression Table - Linear Regression",
-       label="tab1",
-       #covariate.labels = c("Infektion", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
-       dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
-       #table.placement = "H",
-       column.labels = c("M1", "M2", "M3", "M4", "M5", "M6"),
-       model.numbers = FALSE,
-       header=FALSE, 
-       font.size= "footnotesize", 
-       column.sep.width = "-5pt", 
-       keep.stat = c("adj.rsq", "n"))
  
 ```
 
-## Coef Plot - Hypothesis 1
+
+## Coef Plot Example
+
 ```{r Hypothesis 1 - Coef Plot}
 
-## Complete SDS
+## Short Term
 
-plot_summs(lm_hyp1_sds_short, lm_hyp1_sds_long, scale = TRUE, plot.distributions = FALSE)
+plot_summs(ranin_short_m1, ranin_short_m2, ranin_short_m3, scale = TRUE, plot.distributions = FALSE)
 
-## Short Term SDS
+## Long Term
 
-plot_summs(lm_hyp1_sds_st_short, lm_hyp1_sds_st_long, scale = TRUE, plot.distributions = FALSE)
+plot_summs(ranin_long_m1, ranin_long_m2, ranin_long_m3, scale = TRUE, plot.distributions = FALSE)
 
-## Long Term SDS
+## Comparison Short and Longterm M3
 
-plot_summs(lm_hyp1_sds_lt_short, lm_hyp1_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
+plot_summs(ranin_short_m3, ranin_long_m3, scale = TRUE, plot.distributions = FALSE)
 
-## Compare all full models
- 
-plot_summs(lm_hyp1_sds_long, lm_hyp1_sds_st_long, lm_hyp1_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
 
 ```
 
 
-## Hypothesis 2
+## Test Interaction in Linear Model
 
-```{r Hypothesis 2, include = FALSE}
-
-lm_hyp2_sds_short <- lm(gen_sds ~ gen_infektion_v + gen_ethnie_v, df_stigma_long)
-lm_hyp2_sds_int <- lm(gen_sds ~ gen_infektion_v + gen_ethnie_v + gen_infektion_v*gen_ethnie_v, df_stigma_long)
-lm_hyp2_sds_long <- lm(gen_sds ~ gen_infektion_v + gen_ethnie_v + gen_infektion_v*gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_schule + gen_staat + gen_politik, df_stigma_long)
-
-lm_hyp2_sds_st_short <- lm(gen_sds_shortterm ~ gen_infektion_v + gen_ethnie_v, df_stigma_long)
-lm_hyp2_sds_st_int <- lm(gen_sds_shortterm ~ gen_infektion_v + gen_ethnie_v + gen_infektion_v*gen_ethnie_v, df_stigma_long)
-lm_hyp2_sds_st_long <- lm(gen_sds_shortterm ~ gen_infektion_v + gen_ethnie_v + gen_infektion_v*gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_schule + gen_staat + gen_politik, df_stigma_long)
-
-lm_hyp2_sds_lt_short <- lm(gen_sds_longterm ~ gen_infektion_v + gen_ethnie_v, df_stigma_long)
-lm_hyp2_sds_lt_int <- lm(gen_sds_longterm ~ gen_infektion_v + gen_ethnie_v + gen_infektion_v*gen_ethnie_v, df_stigma_long)
-lm_hyp2_sds_lt_long <- lm(gen_sds_longterm ~ gen_infektion_v + gen_ethnie_v+ gen_infektion_v*gen_ethnie_v + SD100 +SD200 + I(SD200^2) + gen_schule + gen_staat + gen_politik, df_stigma_long)
-
- stargazer(lm_hyp2_sds_short, lm_hyp2_sds_int, lm_hyp2_sds_long, 
-       title = "Regression Table - Linear Regression - Hypothesis 2",
-       label="tab2",
-       #covariate.labels = c("Infektion", "Ethnie", "Interaktion-Inf-Ethnie", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
-       dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
-       #table.placement = "H",
-       column.labels = c("M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9"),
-       model.numbers = FALSE,
-       header=FALSE, 
-       font.size= "footnotesize", 
-       column.sep.width = "-5pt", 
-       keep.stat = c("adj.rsq", "n"))
- 
- stargazer(lm_hyp2_sds_st_short, lm_hyp2_sds_st_int, lm_hyp2_sds_st_long,
-       title = "Regression Table - Linear Regression Hypothesis 2 - Short Term",
-       label="tab3",
-       #covariate.labels = c("Infektion", "Ethnie", "Interaktion-Inf-Ethnie", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
-       dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
-       #table.placement = "H",
-       column.labels = c("M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9"),
-       model.numbers = FALSE,
-       header=FALSE, 
-       font.size= "footnotesize", 
-       column.sep.width = "-5pt", 
-       keep.stat = c("adj.rsq", "n"))
- 
-  stargazer(lm_hyp2_sds_lt_short, lm_hyp2_sds_lt_int, lm_hyp2_sds_lt_long,
-       title = "Regression Table - Linear Regression Hypothesis 2 - LongTerm",
-       label="tab4",
-       #covariate.labels = c("Infektion", "Ethnie", "Interaktion-Inf-Ethnie", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
-       dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
-       #table.placement = "H",
-       column.labels = c("M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9"),
-       model.numbers = FALSE,
-       header=FALSE, 
-       font.size= "footnotesize", 
-       column.sep.width = "-5pt", 
-       keep.stat = c("adj.rsq", "n"))
- 
-
-```
-
-## Coef Plot - Hypothesis 2
-```{r Hypothesis 2 - Coef Plot}
-
-## Complete SDS
-
-plot_summs(lm_hyp2_sds_short, lm_hyp2_sds_long, scale = TRUE, plot.distributions = FALSE)
-
-## Short Term SDS
-
-plot_summs(lm_hyp2_sds_st_short, lm_hyp2_sds_st_long, scale = TRUE, plot.distributions = FALSE)
-
-## Long Term SDS
-
-plot_summs(lm_hyp2_sds_lt_short, lm_hyp2_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
-
-## Compare all full models
- 
-plot_summs(lm_hyp2_sds_long, lm_hyp2_sds_st_long, lm_hyp2_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
-
-```
-
-## Hypothesis 3
-
-```{r Hypothesis 3, include = FALSE}
-
-lm_hyp3_sds_short <- lm(gen_sds ~ gen_infektion_v + gen_beruf_v, df_stigma_long)
-lm_hyp3_sds_short_e <- lm(gen_sds ~ gen_infektion_v + gen_essential_v, df_stigma_long)
-lm_hyp3_sds_int <- lm(gen_sds ~ gen_infektion_v + gen_beruf_v + gen_infektion_v*gen_beruf_v, df_stigma_long)
-lm_hyp3_sds_long <- lm(gen_sds ~ gen_infektion_v + gen_beruf_v + gen_infektion_v*gen_beruf_v + SD100 + SD200 + I(SD200^2) + gen_schule + gen_staat + gen_politik, df_stigma_long)
-
-lm_hyp3_sds_st_short <- lm(gen_sds_shortterm ~ gen_infektion_v + gen_beruf_v, df_stigma_long)
-lm_hyp3_sds_st_short_e <- lm(gen_sds ~ gen_infektion_v + gen_essential_v, df_stigma_long)
-lm_hyp3_sds_st_int <- lm(gen_sds_shortterm ~ gen_infektion_v + gen_beruf_v + gen_infektion_v*gen_beruf_v, df_stigma_long)
-lm_hyp3_sds_st_long <- lm(gen_sds_shortterm ~ gen_infektion_v + gen_beruf_v + gen_infektion_v*gen_beruf_v + SD100 + SD200 + I(SD200^2) + gen_schule + gen_staat + gen_politik, df_stigma_long)
-
-lm_hyp3_sds_lt_short <- lm(gen_sds_longterm ~ gen_infektion_v + gen_beruf_v, df_stigma_long)
-lm_hyp3_sds_lt_short_e <- lm(gen_sds ~ gen_infektion_v + gen_essential_v, df_stigma_long)
-lm_hyp3_sds_lt_int <- lm(gen_sds_longterm ~ gen_infektion_v + gen_beruf_v + gen_infektion_v*gen_beruf_v, df_stigma_long)
-lm_hyp3_sds_lt_long <- lm(gen_sds_longterm ~ gen_infektion_v + gen_beruf_v + gen_infektion_v*gen_beruf_v + SD100 +SD200 + I(SD200^2) + gen_schule + gen_staat + gen_politik, df_stigma_long)
-
- stargazer(lm_hyp3_sds_short, lm_hyp3_sds_short_e, lm_hyp3_sds_int, lm_hyp3_sds_long, 
-       title = "Regression Table - Linear Regression - Hypothesis 3",
-       label="tab5",
-       #covariate.labels = c("Infektion", "Ethnie", "Interaktion-Inf-Ethnie", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
-       dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
-       #table.placement = "H",
-       column.labels = c("M1", "M2", "M3", "M4"),
-       model.numbers = FALSE,
-       header=FALSE, 
-       font.size= "footnotesize", 
-       column.sep.width = "-5pt", 
-       keep.stat = c("adj.rsq", "n"))
- 
- stargazer(lm_hyp3_sds_st_short, lm_hyp3_sds_st_short_e, lm_hyp3_sds_st_int, lm_hyp3_sds_st_long,
-       title = "Regression Table - Linear Regression Hypothesis 3 - Short Term",
-       label="tab6",
-       #covariate.labels = c("Infektion", "Ethnie", "Interaktion-Inf-Ethnie", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
-       dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
-       #table.placement = "H",
-       column.labels = c("M1", "M2", "M3", "M4"),
-       model.numbers = FALSE,
-       header=FALSE, 
-       font.size= "footnotesize", 
-       column.sep.width = "-5pt", 
-       keep.stat = c("adj.rsq", "n"))
- 
-  stargazer(lm_hyp3_sds_lt_short, lm_hyp3_sds_lt_short_e, lm_hyp3_sds_lt_int, lm_hyp3_sds_lt_long,
-       title = "Regression Table - Linear Regression Hypothesis 3 - LongTerm",
-       label="tab7",
-       #covariate.labels = c("Infektion", "Ethnie", "Interaktion-Inf-Ethnie", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
-       dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
-       #table.placement = "H",
-       column.labels = c("M1", "M2", "M3", "M4"),
-       model.numbers = FALSE,
-       header=FALSE, 
-       font.size= "footnotesize", 
-       column.sep.width = "-5pt", 
-       keep.stat = c("adj.rsq", "n"))
-
-```
-
-## Coef Plot - Hypothesis 3 
-
-```{r Hypothesis 3 - Coef Plot}
-
-## Complete SDS
-
-plot_summs(lm_hyp3_sds_short, lm_hyp3_sds_long, scale = TRUE, plot.distributions = FALSE)
-
-## Short Term SDS
-
-plot_summs(lm_hyp3_sds_st_short, lm_hyp3_sds_st_long, scale = TRUE, plot.distributions = FALSE)
-
-## Long Term SDS
-
-plot_summs(lm_hyp3_sds_lt_short, lm_hyp3_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
-
-## Compare all full models
- 
-plot_summs(lm_hyp3_sds_long, lm_hyp3_sds_st_long, lm_hyp3_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
-
-```
-
-## Hypothesis 4
-
-```{r Hypothesis 4, include = FALSE}
-
-lm_hyp4_sds_short <- lm(gen_sds ~ gen_infektion_v + gen_alter_v, df_stigma_long)
-lm_hyp4_sds_int <- lm(gen_sds ~ gen_infektion_v + gen_alter_v + gen_infektion_v*gen_alter_v, df_stigma_long)
-lm_hyp4_sds_long <- lm(gen_sds ~ gen_infektion_v + gen_alter_v + gen_infektion_v*gen_alter_v + SD100 + SD200 + I(SD200^2) + gen_schule + gen_staat + gen_politik, df_stigma_long)
-
-lm_hyp4_sds_st_short <- lm(gen_sds_shortterm ~ gen_infektion_v + gen_alter_v, df_stigma_long)
-lm_hyp4_sds_st_int <- lm(gen_sds_shortterm ~ gen_infektion_v + gen_alter_v + gen_infektion_v*gen_alter_v, df_stigma_long)
-lm_hyp4_sds_st_long <- lm(gen_sds_shortterm ~ gen_infektion_v + gen_alter_v + gen_infektion_v*gen_alter_v + SD100 + SD200 + I(SD200^2) + gen_schule + gen_staat + gen_politik, df_stigma_long)
-
-lm_hyp4_sds_lt_short <- lm(gen_sds_longterm ~ gen_infektion_v + gen_alter_v, df_stigma_long)
-lm_hyp4_sds_lt_int <- lm(gen_sds_longterm ~ gen_infektion_v + gen_alter_v + gen_infektion_v*gen_alter_v, df_stigma_long)
-lm_hyp4_sds_lt_long <- lm(gen_sds_longterm ~ gen_infektion_v + gen_alter_v + gen_infektion_v*gen_alter_v + SD100 +SD200 + I(SD200^2) + gen_schule + gen_staat + gen_politik, df_stigma_long)
-
- stargazer(lm_hyp4_sds_short,  lm_hyp4_sds_int, lm_hyp4_sds_long, 
-       title = "Regression Table - Linear Regression - Hypothesis 4",
-       label="tab5",
-       #covariate.labels = c("Infektion", "Ethnie", "Interaktion-Inf-Ethnie", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
-       dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
-       #table.placement = "H",
-       column.labels = c("M1", "M2", "M3", "M4"),
-       model.numbers = FALSE,
-       header=FALSE, 
-       font.size= "footnotesize", 
-       column.sep.width = "-5pt", 
-       keep.stat = c("adj.rsq", "n"))
- 
- stargazer(lm_hyp4_sds_st_short,  lm_hyp4_sds_st_int, lm_hyp4_sds_st_long,
-       title = "Regression Table - Linear Regression Hypothesis 4 - Short Term",
-       label="tab6",
-       #covariate.labels = c("Infektion", "Ethnie", "Interaktion-Inf-Ethnie", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
-       dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
-       #table.placement = "H",
-       column.labels = c("M1", "M2", "M3", "M4"),
-       model.numbers = FALSE,
-       header=FALSE, 
-       font.size= "footnotesize", 
-       column.sep.width = "-5pt", 
-       keep.stat = c("adj.rsq", "n"))
- 
-  stargazer(lm_hyp4_sds_lt_short,  lm_hyp4_sds_lt_int, lm_hyp4_sds_lt_long,
-       title = "Regression Table - Linear Regression Hypothesis 4 - LongTerm",
-       label="tab7",
-       #covariate.labels = c("Infektion", "Ethnie", "Interaktion-Inf-Ethnie", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
-       dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
-       #table.placement = "H",
-       column.labels = c("M1", "M2", "M3", "M4"),
-       model.numbers = FALSE,
-       header=FALSE, 
-       font.size= "footnotesize", 
-       column.sep.width = "-5pt", 
-       keep.stat = c("adj.rsq", "n"))
-
-```
-
-
-## Coef Plot - Hypothesis 4
-
-```{r Hypothesis 4 - Coef Plot}
-
-## Complete SDS
-
-plot_summs(lm_hyp4_sds_short, lm_hyp4_sds_long, scale = TRUE, plot.distributions = FALSE)
-
-## Short Term SDS
-
-plot_summs(lm_hyp4_sds_st_short, lm_hyp4_sds_st_long, scale = TRUE, plot.distributions = FALSE)
-
-## Long Term SDS
-
-plot_summs(lm_hyp4_sds_lt_short, lm_hyp4_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
-
-## Compare all full models
- 
-plot_summs(lm_hyp4_sds_long, lm_hyp4_sds_st_long, lm_hyp4_sds_lt_long, scale = TRUE, plot.distributions = FALSE)
-
-```
-
-
-
-## Hypothesis 4
-
-```{r Hypothesis 4}
+```{r Test}
 
 lm_test <- lm(gen_sds ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v, df_stigma_long)
 lm_test_short <- lm(gen_sds_shortterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v, df_stigma_long)
