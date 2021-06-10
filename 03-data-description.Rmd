@@ -35,6 +35,8 @@ df_stigma_long <- read_csv("df_stigma_long.csv")
 ### Summary 
 
 # soon subset of the data - only important variables should be included, such as age, sex etc.
+df_stigma_subset <- df_stigma_long %>%
+  select(gen_sds_shortterm, gen_sds_longterm, gen_infektion_v, gen_ethnie_v , gen_beruf_v, gen_alter_v, SD100, gen_alter, gen_bund, gen_schule, gen_schule_q)
 
 # Frage:
 #   Welche Werte sollten am besten abgefragt werden? 
@@ -43,7 +45,24 @@ df_stigma_long <- read_csv("df_stigma_long.csv")
 #   -   N
 #   -   Standard Deviation
 
-stargazer(data.frame(df_stigma_wide), type = "latex", summary = TRUE, out = "summary-1.tex")
+stargazer(data.frame(df_stigma_subset), type = "latex", summary = TRUE,summary.stat = c("n", "min", "max", "mean", "median", "sd"),  out = "summary-1.tex")
+
+
+d <- (as.data.frame(table(df_stigma_subset$SD100)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
+f <- (as.data.frame(table(df_stigma_subset$gen_alter)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
+e <- (as.data.frame(table(df_stigma_subset$gen_bund)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
+g <- (as.data.frame(table(df_stigma_subset$gen_schule_q)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
+
+df <- bind_rows(d, f, e, g)
+
+stargazer(data.frame(df), type = "latex", 
+       summary = FALSE,
+       title = "Quotation Table",
+       label="tab4",
+       covariate.labels = c("", "Label", "Frequency","Percentages"))
+       #dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
+       #table.placement = "H",
+       #column.labels = c("Count", "Frequency", "Percentatage"))
 ```
 
 ```{r normal distribution - dependent variable}

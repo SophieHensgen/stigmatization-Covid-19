@@ -203,6 +203,30 @@ df_nolab <-  df_nolab %>%
 count(df_nolab, SD400)
 count(df_nolab, gen_schule)
 
+### School SD400 - gen_schule
+
+# new Variable: 
+
+# 1 = No Education
+# 2 = Hauptschulabschluss
+# 3 = Realschulabschluss
+# 4 = (Fach-)Abitur
+# 99 = Missings (Other) Maybe look into them and address them accordingly
+
+df_nolab <-  df_nolab %>%
+  mutate(gen_schule_q = ifelse(SD400 == 3 , 2,
+                               ifelse(SD400 == 4, 3,
+                                  ifelse(SD400 >= 5 & SD400 <= 6, 4,
+                                         ifelse(SD400 == 2, 1,
+                                                ifelse(SD400 == 7 & SD400_o == "Uni abschluss", 4, 
+                                                       ifelse(SD400 == 7 & SD400_o == "Master", 4,
+                                                              ifelse(SD400 == 7 & SD400_o == "Doktor", 4,
+                                                                     ifelse(SD400 == 7 & SD400_o == "Studium", 4,
+                                                                            ifelse(SD400 == 7 & SD400_o == "Hauptschule", 2,99))))))))))
+
+count(df_nolab, SD400)
+count(df_nolab, gen_schule_q)
+
 ###########################################################################################################################################
 
 
@@ -720,7 +744,7 @@ write_csv(df_nolab, "df_stigma_wide.csv")
 ```{r Reshape Data}
 
 df_stigma_long <- df_nolab %>%
-  select("id","V100", "V200", "V300", "V400", "SD100", "SD200", "SD300", "SD400", "SD500_1", "SD500_2","SD500_3", "SD500_4","SD500_5", "SD500_6","SD500_7", "SD500_8","SD500_8_o","SD500_9", "SD600_1", "SD600_2","SD600_3","SD700", "alter_v1", "alter_v2", "alter_v3", "alter_v4", "sex_v1", "sex_v2", "sex_v3", "sex_v4", "ethnie_v1", "ethnie_v2", "ethnie_v3", "ethnie_v4", "beruf_v1", "beruf_v2", "beruf_v3", "beruf_v4", "essential_v1", "essential_v2", "essential_v3", "essential_v4", "infektion_v1", "infektion_v2", "infektion_v3", "infektion_v4","SDS100_v1", "SDS200_v1", "SDS300_v1", "SDS400_v1", "SDS500_v1", "SDS600_v1", "SDS100_v2", "SDS200_v2", "SDS300_v2", "SDS400_v2", "SDS500_v2", "SDS600_v2", "SDS100_v3", "SDS200_v3", "SDS300_v3", "SDS400_v3", "SDS500_v3", "SDS600_v3", "SDS100_v4", "SDS200_v4", "SDS300_v4", "SDS400_v4", "SDS500_v4", "SDS600_v4", "EC19100", "EC19200", "EC19300", "EC19400", "MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8", "MC19100_9", "MC19200", "IC19100", "IC19200", "IC19300", "PE100", "completed", "duration", "gen_alter", "gen_bund", "gen_schule", "gen_beruf", "gen_staat", "gen_herkunft", "gen_impfung", "gen_politik") %>% #Reihenfolge erstellen
+  select("id","V100", "V200", "V300", "V400", "SD100", "SD200", "SD300", "SD400", "SD500_1", "SD500_2","SD500_3", "SD500_4","SD500_5", "SD500_6","SD500_7", "SD500_8","SD500_8_o","SD500_9", "SD600_1", "SD600_2","SD600_3","SD700", "alter_v1", "alter_v2", "alter_v3", "alter_v4", "sex_v1", "sex_v2", "sex_v3", "sex_v4", "ethnie_v1", "ethnie_v2", "ethnie_v3", "ethnie_v4", "beruf_v1", "beruf_v2", "beruf_v3", "beruf_v4", "essential_v1", "essential_v2", "essential_v3", "essential_v4", "infektion_v1", "infektion_v2", "infektion_v3", "infektion_v4","SDS100_v1", "SDS200_v1", "SDS300_v1", "SDS400_v1", "SDS500_v1", "SDS600_v1", "SDS100_v2", "SDS200_v2", "SDS300_v2", "SDS400_v2", "SDS500_v2", "SDS600_v2", "SDS100_v3", "SDS200_v3", "SDS300_v3", "SDS400_v3", "SDS500_v3", "SDS600_v3", "SDS100_v4", "SDS200_v4", "SDS300_v4", "SDS400_v4", "SDS500_v4", "SDS600_v4", "EC19100", "EC19200", "EC19300", "EC19400", "MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8", "MC19100_9", "MC19200", "IC19100", "IC19200", "IC19300", "PE100", "completed", "duration", "gen_alter", "gen_bund", "gen_schule", "gen_schule_q", "gen_beruf", "gen_staat", "gen_herkunft", "gen_impfung", "gen_politik") %>% #Reihenfolge erstellen
   gather(key, value, alter_v1:SDS600_v4) %>%
   separate(key, c("type", "vignr")) %>%
   spread(type, value)
@@ -728,7 +752,7 @@ df_stigma_long <- df_nolab %>%
 df_stigma_long
 
 
-colnames(df_stigma_long) <- c("id","V100", "V200", "V300", "V400", "SD100", "SD200", "SD300", "SD400", "SD500_1", "SD500_2","SD500_3", "SD500_4","SD500_5", "SD500_6","SD500_7", "SD500_8","SD500_8_o","SD500_9", "SD600_1", "SD600_2","SD600_3","SD700", "EC19100", "EC19200", "EC19300", "EC19400", "MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8", "MC19100_9", "MC19200", "IC19100", "IC19200", "IC19300", "PE100", "completed", "duration", "gen_alter", "gen_bund", "gen_schule", "gen_beruf", "gen_staat", "gen_herkunft", "gen_impfung", "gen_politik", "vignr", "gen_alter_v", "gen_beruf_v", "gen_essential_v", "gen_ethnie_v", "gen_infektion_v", "SDS100", "SDS200", "SDS300", "SDS400", "SDS500", "SDS600", "gen_sex_v")
+colnames(df_stigma_long) <- c("id","V100", "V200", "V300", "V400", "SD100", "SD200", "SD300", "SD400", "SD500_1", "SD500_2","SD500_3", "SD500_4","SD500_5", "SD500_6","SD500_7", "SD500_8","SD500_8_o","SD500_9", "SD600_1", "SD600_2","SD600_3","SD700", "EC19100", "EC19200", "EC19300", "EC19400", "MC19100_1", "MC19100_2", "MC19100_3", "MC19100_4", "MC19100_5", "MC19100_6", "MC19100_7", "MC19100_8", "MC19100_9", "MC19200", "IC19100", "IC19200", "IC19300", "PE100", "completed", "duration", "gen_alter", "gen_bund", "gen_schule", "gen_schule_q", "gen_beruf", "gen_staat", "gen_herkunft", "gen_impfung", "gen_politik", "vignr", "gen_alter_v", "gen_beruf_v", "gen_essential_v", "gen_ethnie_v", "gen_infektion_v", "SDS100", "SDS200", "SDS300", "SDS400", "SDS500", "SDS600", "gen_sex_v")
 ```
 
 
