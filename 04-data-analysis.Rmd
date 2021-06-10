@@ -161,36 +161,41 @@ ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_b
 
 ```{r Hypothesis 1 - predicted Estimates}
 
-## Short Term
+## 0. Test data set
+
 test <- df_stigma_long %>%
-  select(gen_sds_shortterm, gen_infektion_v, gen_alter_v, gen_beruf_v, gen_sex_v, gen_ethnie_v, id) %>% #SD100, SD200, gen_bund, gen_schule, gen_herkunf
+  select(gen_sds_shortterm, gen_infektion_v, gen_alter_v, gen_beruf_v, gen_sex_v, gen_ethnie_v, id) %>% 
   drop_na()
 
-test$pred <- predict(ranin_long_m2, type = "response")
+## 1. Build linear model 
 
-mod <- lmer(gen_sds_shortterm ~  gen_infektion_v*gen_beruf_v + (1 | id), data = test)
-plot(predictorEffect("gen_infektion_v", mod), lines=list(multiline=TRUE))
-plot(predictorEffects(ranin_short_m5, ~ gen_beruf_v + gen_infektion_v), lines=list(multiline=TRUE))
+ranin_test <-  lmer(gen_sds_shortterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_infektion_v*gen_beruf_v + (1 | id), data = test)
 
-# 0. Build linear model 
-ranin_long_m2 <-  lmer(gen_sds_shortterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_infektion_v*gen_beruf_v + (1 | id), data = test)
+## 2. Plot Model
 
-# 1. Add predictions 
-pred.int <- predict(ranin_long_m2, interval = "prediction")
+# 2.1 Plot predicted Values with plot_model
+
+plot_model(ranin_test, type = "pred", terms = c("gen_infektion_v", "gen_beruf_v"))
+
+
+# 2.2 Plot predicted Effects with predictorEffects
+
+plot(predictorEffect("gen_infektion_v", ranin_test), lines=list(multiline=TRUE))
+plot(predictorEffects(ranin_test, ~ gen_beruf_v + gen_infektion_v), lines=list(multiline=TRUE))
+
+
+# 2.3 Add predictions & Plot Regression Line
+
+pred.int <- predict(ranin_test, interval = "prediction")
 mydata <- cbind(test, pred.int)
-# 2. Regression line + confidence intervals
-library("ggplot2")
-p <- ggplot(mydata, aes(pred.int, gen_sds_shortterm, col = gen_beruf_v)) +
+
+ggplot(mydata, aes(gen_sds_shortterm, pred.int, col = gen_beruf_v)) +
   #geom_point() +
   #stat_smooth(method = lm) +
   #geom_jitter() +
   geom_smooth(se = FALSE) +
   facet_grid(. ~ gen_infektion_v)
 
-plot(predictorEffects(ranin_short_m5, ~ gen_beruf_v + gen_infektion_v), lines=list(multiline=TRUE))
-
-
-plot_model(mod, type = "pred", terms = c("gen_infektion_v", "gen_beruf_v"))
 ```
 
 ###########################################################################################################################################

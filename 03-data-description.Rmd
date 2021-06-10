@@ -939,34 +939,6 @@ ggplot(df_stigma_long, aes(x = gen_situation, y = gen_sds_shortterm,  alpha = 0.
   geom_jitter()  +
   facet_wrap(~gen_infektion_v)
 
-## Einstellung derzeitige Lage - Gesundheit
-
-ggplot(df_stigma_long, aes(x = gen_situation_gesund, y = gen_sds,  alpha = 0.5)) +
-  geom_jitter()  +
-  facet_wrap(~gen_infektion_v)
-
-ggplot(df_stigma_long, aes(x = gen_situation_gesund, y = gen_sds_longterm,  alpha = 0.5)) +
-  geom_jitter()  +
-  facet_wrap(~gen_infektion_v)
-
-ggplot(df_stigma_long, aes(x = gen_situation_gesund, y = gen_sds_shortterm,  alpha = 0.5)) +
-  geom_jitter()  +
-  facet_wrap(~gen_infektion_v)
-
-
-## Einstellung derzeitige Lage - Finanzen
-
-ggplot(df_stigma_long, aes(x = gen_situation_finanzen, y = gen_sds,  alpha = 0.5)) +
-  geom_jitter()  +
-  facet_wrap(~gen_infektion_v)
-
-ggplot(df_stigma_long, aes(x = gen_situation_finanzen, y = gen_sds_longterm,  alpha = 0.5)) +
-  geom_jitter()  +
-  facet_wrap(~gen_infektion_v)
-
-ggplot(df_stigma_long, aes(x = gen_situation_finanzen, y = gen_sds_shortterm,  alpha = 0.5)) +
-  geom_jitter()  +
-  facet_wrap(~gen_infektion_v)
 ```
 
 
