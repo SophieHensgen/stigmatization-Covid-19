@@ -22,32 +22,19 @@ library(plm)
 library(lmtest)
 library(Matrix)
 library(lme4)
-library(stargazer)
-library(devtools)
 library(effects)
-library(sjPlot) 
-library(openxlsx)
-library(xml2)
-library(rvest)
-library(jsonlite)
 library(robotstxt)
 library(RSocrata)
 library(rlist)
 library(pipeR)
 library(gtrendsR)
 library(lubridate)
-library(writexl)
-library(readxl)
-#library(magrittr)
-#library(broom)
-#library(knitr)
 library(ggpubr)
 library(ggiraph)
 library(devtools)
 library(ggiraphExtra)
 library(ggeffects)
 library(systemfonts)
-library(jtools)
 library(broom.mixed)
 library(sjPlot)
 library(sjlabelled)
@@ -156,97 +143,147 @@ ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_b
 ##                                                                                                                                       ##
 ###########################################################################################################################################
 
-
 ## Predicted Estimate Graph
 
 ```{r Hypothesis 1 - predicted Estimates}
 
-## 0. Test data set
+## 0. Data set
 
-test <- df_stigma_long %>%
-  select(gen_sds_shortterm, gen_infektion_v, gen_alter_v, gen_beruf_v, gen_sex_v, gen_ethnie_v, id) %>% 
-  drop_na()
+# head(df_stigma_long) # control data set
 
 ## 1. Build linear model 
 
-ranin_test <-  lmer(gen_sds_shortterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_infektion_v*gen_beruf_v + (1 | id), data = test)
+# 1.1 Build Linear Model DV: SDS Short Term
+
+ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_bund + gen_schule + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+
+# 1.2 Build Linear Model DV: SDS Long Term
+
+ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_bund + gen_schule + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
 
 ## 2. Plot Model
 
-# 2.1 Plot predicted Values with plot_model
+# 2.1 Use ggpredict to calculate the average predicted estimates
 
-plot_model(ranin_test, type = "pred", terms = c("gen_infektion_v", "gen_beruf_v"))
+pred_short_h1 <- ggpredict(ranin_short_m5, terms = c("gen_infektion_v"), type = "random", typical = c("typical_value")) # shortterm sds
+pred_long_h1 <- ggpredict(ranin_long_m5, terms = c("gen_infektion_v"), type = "random", typical = c("typical_value")) # longterm sds
 
+# 2.2 Plot the data from 2.1 using ggplot2
 
-# 2.2 Plot predicted Effects with predictorEffects
+# create additional variables to make it easier to combine both graphs
+pred_long_h1$SDS <- "Long Term SDS"
+pred_short_h1$SDS <- "Short Term SDS"
+pred_long_h1$SDS <- as.factor(pred_long_h1$SDS)
+pred_short_h1$SDS <- as.factor(pred_short_h1$SDS)
+pred_h1 <- rbind(pred_long_h1, pred_short_h1)
 
-plot(predictorEffect("gen_infektion_v", ranin_test), lines=list(multiline=TRUE))
-plot(predictorEffects(ranin_test, ~ gen_beruf_v + gen_infektion_v), lines=list(multiline=TRUE))
+pred_h1 %>%
+  mutate(x = fct_relevel(x, 
+            "1", "2", "3")) %>% # changed order of categorical variable x
+  ggplot(aes(x=x, y=predicted, group=SDS, col=SDS)) +
+      geom_point() +
+      geom_line() + 
+      xlab("Infection Status") +
+      ylab("Predicted Average Estimates") + 
+      scale_x_discrete(labels = c('Currently Infected','Former Infected','Not Infected')) +
+      scale_color_manual(values=c("#E69F00", "#56B4E9")) +
+      theme_minimal()
+      
+```
+### Predicted Estimate Graph - Hypothesis 2
 
+```{r Hypothesis 2 - predicted Estimates}
 
-# 2.3 Add predictions & Plot Regression Line
+## 0. Data set
 
-pred.int <- predict(ranin_test, interval = "prediction")
-mydata <- cbind(test, pred.int)
+# head(df_stigma_long) # control data set
 
-ggplot(mydata, aes(gen_sds_shortterm, pred.int, col = gen_beruf_v)) +
-  #geom_point() +
-  #stat_smooth(method = lm) +
-  #geom_jitter() +
-  geom_smooth(se = FALSE) +
-  facet_grid(. ~ gen_infektion_v)
+## 1. Build linear model 
 
+# 1.1 Build Linear Model DV: SDS Short Term
+
+ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_bund + gen_schule + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+
+# 1.2 Build Linear Model DV: SDS Long Term
+
+ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_bund + gen_schule + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+
+## 2. Plot Model
+
+# 2.1 Use ggpredict to calculate the average predicted estimates
+
+pred_long_h2 <- ggpredict(ranin_long_m5, terms = c("gen_infektion_v", "gen_beruf_v"), type = "random", typical = c("typical_value")) # longterm sds
+
+# 2.2 Plot the data from 2.1 using ggplot2
+
+# create additional variables to make it easier to combine both graphs
+
+pred_long_h2 %>%
+  mutate(x = fct_relevel(x, 
+            "1", "2", "3")) %>% # changed order of categorical variable x
+  ggplot(aes(x=x, y=predicted, group=group, colour = group)) +
+      geom_point() +
+      geom_line() + 
+      xlab("Infection Status") +
+      ylab("Predicted Average Estimates") + 
+      scale_x_discrete(labels = c('Currently Infected','Former Infected','Not Infected')) +
+      scale_colour_discrete(name = "Ethnicity", labels = c("Asian", "Caucasian", "Turkish")) +
+      scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9")) +
+      theme_minimal()
+      
 ```
 
-###########################################################################################################################################
-##                                                                                                                                       ##
-##                                                 Test - Cluster Robust Standard Error Test                                             ##
-##                                                                                                                                       ##
-###########################################################################################################################################
 
-## Cluster Robust Standard Error Test
+### Predicted Estimate Graph - Hypothesis 3
 
-```{r Cluster Robust Standard Error Test, include = FALSE}
+```{r Hypothesis 3 - predicted Estimates}
 
-## Cluster Robust Standard Error Test
-m1 <- lm(gen_sds ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik, data = df_stigma_long)
-pm1 <- plm(gen_sds ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + gen_politik, data = df_stigma_long, model = "pooling", index = "vignr")
+## 0. Data set
 
-# compute Stata like df-adjustment
-G <- length(unique(df_stigma_long$vignr))
-N <- length(df_stigma_long$vignr)
-dfa <- (G/(G - 1)) * (N - 1)/pm1$df.residual
- 
-# display with cluster VCE and df-adjustment
-firm_c_vcov <- dfa * vcovHC(pm1, type = "HC0", cluster = "group", adjust = T)
-coeftest(pm1, vcov = firm_c_vcov)
+# head(df_stigma_long) # control data set
 
-#waldtest(pm1, vcov = firm_c_vcov, test = "F")
+## 1. Build linear model 
 
+# 1.1 Build Linear Model DV: SDS Short Term
 
+ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_bund + gen_schule + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+
+# 1.2 Build Linear Model DV: SDS Long Term
+
+ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_bund + gen_schule + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+
+## 2. Plot Model
+
+# 2.1 Use ggpredict to calculate the average predicted estimates
+
+pred_short_h3 <- ggpredict(ranin_short_m5, terms = c("gen_infektion_v", "gen_beruf_v"), type = "random", typical = c("typical_value")) # shortterm sds
+pred_long_h3 <- ggpredict(ranin_long_m5, terms = c("gen_infektion_v", "gen_beruf_v"), type = "random", typical = c("typical_value")) # longterm sds
+
+# 2.2 Plot the data from 2.1 using ggplot2
+
+# create additional variables to make it easier to combine both graphs
+pred_long_h3$SDS <- "Long Term SDS"
+pred_short_h3$SDS <- "Short Term SDS"
+pred_long_h3$SDS <- as.factor(pred_long_h3$SDS)
+pred_short_h3$SDS <- as.factor(pred_short_h3$SDS)
+pred_h3 <- rbind(pred_long_h3, pred_short_h3)
+
+pred_h3 %>%
+  mutate(x = fct_relevel(x, 
+            "1", "2", "3")) %>% # changed order of categorical variable x
+  ggplot(aes(x=x, y=predicted, group=group, col=group)) +
+      geom_point() +
+      geom_line() + 
+      facet_grid(.~SDS) +
+      xlab("Infection Status") +
+      ylab("Predicted Average Estimates") + 
+      scale_x_discrete(labels = c('Currently Infected','Former Infected','Not Infected')) +
+      #scale_color_discrete(name = "Occupation", labels = c("Administrative", "Nurse", "Cashier")) +
+      scale_color_manual(name = "Occupation", values=c("#999999", "#E69F00", "#56B4E9"), labels = c("Administrative", "Nurse", "Cashier")) +
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 ```
 
-
-
-
-## Coef Plot Example
-
-```{r Hypothesis 1 - Coef Plot}
-
-## Short Term
-
-plot_summs(ranin_short_m1, ranin_short_m2, ranin_short_m3, scale = TRUE, plot.distributions = FALSE)
-
-## Long Term
-
-plot_summs(ranin_long_m1, ranin_long_m2, ranin_long_m3, scale = TRUE, plot.distributions = FALSE)
-
-## Comparison Short and Longterm M3
-
-plot_summs(ranin_short_m3, ranin_long_m3, scale = TRUE, plot.distributions = FALSE)
-
-
-```
 
 
 
