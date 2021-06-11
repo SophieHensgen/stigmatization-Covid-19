@@ -227,8 +227,7 @@ pred_long_h2 %>%
       xlab("Infection Status") +
       ylab("Predicted Average Estimates") + 
       scale_x_discrete(labels = c('Currently Infected','Former Infected','Not Infected')) +
-      scale_colour_discrete(name = "Ethnicity", labels = c("Asian", "Caucasian", "Turkish")) +
-      scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9")) +
+      scale_color_manual(name = "Occupation", values=c("#999999", "#E69F00", "#56B4E9"), labels = c("Administrative", "Nurse", "Cashier")) +
       theme_minimal()
       
 ```
