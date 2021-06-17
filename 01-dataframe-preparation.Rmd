@@ -174,10 +174,12 @@ count(df_nolab, gen_alter)
 
 # 1 = West
 # 0 = East
-
-df_nolab <- df_nolab%>%
-  mutate(gen_bund = ifelse(SD300 == c(4, 8, 13, 14, 16), 0, 1))
- 
+df_nolab <-  df_nolab %>%
+  mutate(gen_bund = ifelse(SD300 == 4, 0,
+                                  ifelse(SD300 == 8, 0,
+                                         ifelse(SD300 == 13, 0,
+                                                ifelse(SD300 == 14, 0, 
+                                                       ifelse(SD400 == 16, 0, 1))))))
 ###########################################################################################################################################
 
 

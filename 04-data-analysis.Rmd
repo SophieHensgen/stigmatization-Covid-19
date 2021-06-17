@@ -39,7 +39,7 @@ library(broom.mixed)
 library(sjPlot)
 library(sjlabelled)
 library(sjmisc)
-
+library(tikzDevice)
 ```
 
 ## Load Data Set
@@ -85,7 +85,7 @@ df_stigma_long$gen_infektion_v <- relevel(df_stigma_long$gen_infektion_v, ref = 
 df_stigma_long$gen_politik <- relevel(df_stigma_long$gen_politik, ref = 2)
 df_stigma_long$gen_schule <- relevel(df_stigma_long$gen_schule, ref = 3)
 df_stigma_long$gen_beruf_v <- relevel(df_stigma_long$gen_beruf_v, ref = 3)
-
+df_stigma_long$SD100 <- relevel(df_stigma_long$SD100, ref = 2)
 ```
 
 ###########################################################################################################################################
@@ -169,6 +169,12 @@ pred_short_h1 <- ggpredict(ranin_short_m5, terms = c("gen_infektion_v"), type = 
 pred_long_h1 <- ggpredict(ranin_long_m5, terms = c("gen_infektion_v"), type = "random", typical = c("typical_value")) # longterm sds
 
 # 2.2 Plot the data from 2.1 using ggplot2
+options(tikzMetricPackages = c("\\usepackage[utf8]{inputenc}","\\usepackage[T1]{fontenc}", "\\usetikzlibrary{calc}", "\\usepackage{amssymb}"))
+
+options(tz="Europe/Berlin")
+
+tikz(file = "plot_test.tex", width = 5, height = 5)
+
 
 # create additional variables to make it easier to combine both graphs
 pred_long_h1$SDS <- "Long Term SDS"
@@ -177,18 +183,25 @@ pred_long_h1$SDS <- as.factor(pred_long_h1$SDS)
 pred_short_h1$SDS <- as.factor(pred_short_h1$SDS)
 pred_h1 <- rbind(pred_long_h1, pred_short_h1)
 
-pred_h1 %>%
+plot <- pred_h1 %>%
   mutate(x = fct_relevel(x, 
             "1", "2", "3")) %>% # changed order of categorical variable x
   ggplot(aes(x=x, y=predicted, group=SDS, col=SDS)) +
       geom_point() +
       geom_line() + 
-      xlab("Infection Status") +
-      ylab("Predicted Average Estimates") + 
+      #xlab("Infection Status") +
+      #ylab("Predicted Average Estimates") + 
       scale_x_discrete(labels = c('Currently Infected','Former Infected','Not Infected')) +
       scale_color_manual(values=c("#E69F00", "#56B4E9")) +
+      ggtitle( paste("Predicted Infection Status", "\\hspace{0.01cm} title")) +
+		  labs( x = "Infection Status", y = "Predicted Average Estimates") +
       theme_minimal()
       
+print(plot)
+graphics.off()
+dev.off()
+tikzTest("\\char77") 
+
 ```
 ### Predicted Estimate Graph - Hypothesis 2
 
