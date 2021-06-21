@@ -40,6 +40,7 @@ library(sjPlot)
 library(sjlabelled)
 library(sjmisc)
 library(tikzDevice)
+library(ggtext)
 ```
 
 ## Load Data Set
@@ -169,12 +170,6 @@ pred_short_h1 <- ggpredict(ranin_short_m5, terms = c("gen_infektion_v"), type = 
 pred_long_h1 <- ggpredict(ranin_long_m5, terms = c("gen_infektion_v"), type = "random", typical = c("typical_value")) # longterm sds
 
 # 2.2 Plot the data from 2.1 using ggplot2
-options(tikzMetricPackages = c("\\usepackage[utf8]{inputenc}","\\usepackage[T1]{fontenc}", "\\usetikzlibrary{calc}", "\\usepackage{amssymb}"))
-
-options(tz="Europe/Berlin")
-
-tikz(file = "plot_test.tex", width = 5, height = 5)
-
 
 # create additional variables to make it easier to combine both graphs
 pred_long_h1$SDS <- "Long Term SDS"
@@ -183,7 +178,8 @@ pred_long_h1$SDS <- as.factor(pred_long_h1$SDS)
 pred_short_h1$SDS <- as.factor(pred_short_h1$SDS)
 pred_h1 <- rbind(pred_long_h1, pred_short_h1)
 
-plot <- pred_h1 %>%
+
+plot_hyp1 <- pred_h1 %>%
   mutate(x = fct_relevel(x, 
             "1", "2", "3")) %>% # changed order of categorical variable x
   ggplot(aes(x=x, y=predicted, group=SDS, col=SDS)) +
@@ -193,14 +189,18 @@ plot <- pred_h1 %>%
       #ylab("Predicted Average Estimates") + 
       scale_x_discrete(labels = c('Currently Infected','Former Infected','Not Infected')) +
       scale_color_manual(values=c("#E69F00", "#56B4E9")) +
-      ggtitle( paste("Predicted Infection Status", "\\hspace{0.01cm} title")) +
-		  labs( x = "Infection Status", y = "Predicted Average Estimates") +
-      theme_minimal()
-      
-print(plot)
-graphics.off()
-dev.off()
-tikzTest("\\char77") 
+      #ggtitle( paste("Predicted Infection Status")) +
+		  labs( x = "Infection Status", y = "Predicted Average Estimates for SDS") +
+      theme_minimal()+
+      theme(
+      axis.title = element_text(family = 'Times'),
+      axis.text.x = element_markdown(family = 'Times'),
+      axis.text.y = element_markdown(family = 'Times'),
+      legend.text = ggtext::element_markdown(family = 'Times'),
+      legend.title = element_markdown(family = 'Times'))
+    
+print(plot_hyp1)
+ggsave(filename = "hyp1.pdf", width = 14, height = 10, dpi = 300, units = "cm")
 
 ```
 ### Predicted Estimate Graph - Hypothesis 2
@@ -225,13 +225,13 @@ ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_b
 
 # 2.1 Use ggpredict to calculate the average predicted estimates
 
-pred_long_h2 <- ggpredict(ranin_long_m5, terms = c("gen_infektion_v", "gen_beruf_v"), type = "random", typical = c("typical_value")) # longterm sds
+pred_long_h2 <- ggpredict(ranin_long_m5, terms = c("gen_infektion_v", "gen_ethnie_v"), type = "random", typical = c("typical_value")) # longterm sds
 
 # 2.2 Plot the data from 2.1 using ggplot2
 
 # create additional variables to make it easier to combine both graphs
 
-pred_long_h2 %>%
+plot_hyp2 <- pred_long_h2 %>%
   mutate(x = fct_relevel(x, 
             "1", "2", "3")) %>% # changed order of categorical variable x
   ggplot(aes(x=x, y=predicted, group=group, colour = group)) +
@@ -240,9 +240,17 @@ pred_long_h2 %>%
       xlab("Infection Status") +
       ylab("Predicted Average Estimates") + 
       scale_x_discrete(labels = c('Currently Infected','Former Infected','Not Infected')) +
-      scale_color_manual(name = "Occupation", values=c("#999999", "#E69F00", "#56B4E9"), labels = c("Administrative", "Nurse", "Cashier")) +
-      theme_minimal()
+      scale_color_manual(name = "Occupation", values=c("#999999", "#E69F00", "#56B4E9"), labels = c("German", "Turkish", "Asian")) +
+      theme_minimal() +
+      theme(
+      axis.title = element_text(family = 'Times'),
+      axis.text.x = element_markdown(family = 'Times'),
+      axis.text.y = element_markdown(family = 'Times'),
+      legend.text = ggtext::element_markdown(family = 'Times'),
+      legend.title = element_markdown(family = 'Times'))
       
+print(plot_hyp2)
+ggsave(filename = "hyp2.pdf", width = 14, height = 10, dpi = 300, units = "cm")
 ```
 
 
@@ -280,7 +288,7 @@ pred_long_h3$SDS <- as.factor(pred_long_h3$SDS)
 pred_short_h3$SDS <- as.factor(pred_short_h3$SDS)
 pred_h3 <- rbind(pred_long_h3, pred_short_h3)
 
-pred_h3 %>%
+plot_hyp3 <- pred_h3 %>%
   mutate(x = fct_relevel(x, 
             "1", "2", "3")) %>% # changed order of categorical variable x
   ggplot(aes(x=x, y=predicted, group=group, col=group)) +
@@ -293,12 +301,69 @@ pred_h3 %>%
       #scale_color_discrete(name = "Occupation", labels = c("Administrative", "Nurse", "Cashier")) +
       scale_color_manual(name = "Occupation", values=c("#999999", "#E69F00", "#56B4E9"), labels = c("Administrative", "Nurse", "Cashier")) +
       theme_minimal() +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+      theme(
+      axis.title = element_text(family = 'Times'),
+      axis.text.x = element_markdown(family = 'Times'),
+      axis.text.y = element_markdown(family = 'Times'),
+      legend.text = ggtext::element_markdown(family = 'Times'),
+      legend.title = element_markdown(family = 'Times'))
+
+print(plot_hyp3)
+ggsave(filename = "hyp3.pdf", width = 14, height = 10, dpi = 300, units = "cm")
 ```
 
 
 
+### Predicted Estimate Graph - Hypothesis 3
 
+```{r Hypothesis 2 - predicted Estimates}
+
+## 0. Data set
+
+# head(df_stigma_long) # control data set
+
+## 1. Build linear model 
+
+# 1.1 Build Linear Model DV: SDS Short Term
+
+ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_bund + gen_schule + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+
+# 1.2 Build Linear Model DV: SDS Long Term
+
+ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + SD200 + I(SD200^2) + gen_bund + gen_schule + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+
+## 2. Plot Model
+
+# 2.1 Use ggpredict to calculate the average predicted estimates
+
+pred_long_h2 <- ggpredict(ranin_long_m5, terms = c("gen_infektion_v", "gen_alter_v"), type = "random", typical = c("typical_value")) # longterm sds
+
+# 2.2 Plot the data from 2.1 using ggplot2
+
+# create additional variables to make it easier to combine both graphs
+
+plot_hyp4 <- pred_long_h2 %>%
+  mutate(x = fct_relevel(x, 
+            "1", "2", "3")) %>% # changed order of categorical variable x
+  ggplot(aes(x=x, y=predicted, group=group, colour = group)) +
+      geom_point() +
+      geom_line() + 
+      xlab("Infection Status") +
+      ylab("Predicted Average Estimates") + 
+      scale_x_discrete(labels = c('Currently Infected','Former Infected','Not Infected')) +
+      scale_color_manual(name = "Occupation", values=c("#999999", "#E69F00", "#56B4E9"), labels = c("22 Years", "43 Years", "64 Years")) +
+      theme_minimal() +
+      theme(
+      axis.title = element_text(family = 'Times'),
+      axis.text.x = element_markdown(family = 'Times'),
+      axis.text.y = element_markdown(family = 'Times'),
+      legend.text = ggtext::element_markdown(family = 'Times'),
+      legend.title = element_markdown(family = 'Times'))
+      
+print(plot_hyp4)
+ggsave(filename = "hyp4.pdf", width = 14, height = 10, dpi = 300, units = "cm")
+```
 
 
 
