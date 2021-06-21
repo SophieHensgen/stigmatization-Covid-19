@@ -35,31 +35,56 @@ df_stigma_long <- read_csv("df_stigma_long.csv")
 ### Summary 
 
 # soon subset of the data - only important variables should be included, such as age, sex etc.
-df_stigma_subset <- df_stigma_long %>%
-  select(gen_sds_shortterm, gen_sds_longterm, gen_infektion_v, gen_ethnie_v , gen_beruf_v, gen_alter_v, SD100, gen_alter, gen_bund, gen_schule, gen_schule_q)
+df_stigma_subset_long <- df_stigma_long %>%
+  select(gen_sds_shortterm, gen_herkunft, gen_politik, gen_situation, gen_mc_largegroups, gen_mc_smallgroups, gen_mc_bars, gen_mc_none, gen_impfung, SD100, gen_alter, gen_bund, gen_schule, gen_schule_q, vignr, id)
 
-# Frage:
-#   Welche Werte sollten am besten abgefragt werden? 
-#   -   Min und Max
+# spread data set in long format, as we are only interested in the particpant Level for the summary
+df_stigma_subset_wide <- spread(df_stigma_subset_long, vignr, gen_sds_shortterm)
+
+# soon subset of the data - only important variables should be included, such as age, sex etc.
+df_stigma_subset_long2 <- df_stigma_long %>%
+  select(gen_sds_longterm, gen_herkunft, gen_politik, gen_situation, gen_mc_largegroups, gen_mc_smallgroups, gen_mc_bars, gen_mc_none, gen_impfung, SD100, gen_alter, gen_bund, gen_schule, gen_schule_q, vignr, id)
+
+# spread data set in long format, as we are only interested in the particpant Level for the summary
+df_stigma_subset_wide2 <- spread(df_stigma_subset_long2, vignr, gen_sds_longterm)
+
+# Combining both data sets 
+df_stigma_subset_wide <- df_stigma_subset_wide %>%
+  full_join(df_stigma_subset_wide2, by = c("id", "gen_herkunft", "gen_politik", "gen_situation", "gen_mc_largegroups", "gen_mc_smallgroups", "gen_mc_bars", "gen_mc_none", "gen_impfung", "SD100", "gen_alter", "gen_bund", "gen_schule", "gen_schule_q"))
+
+# Rename new columns
+colnames(df_stigma_subset_wide) <- c("gen_herkunft", "gen_politik", "gen_situation", "gen_mc_largegroups", "gen_mc_smallgroups", "gen_mc_bars", "gen_mc_none", "gen_impfung", "SD100", "gen_alter", "gen_bund", "gen_schule", "gen_schule_q", "id", "gen_sds_shortterm_v1", "gen_sds_shortterm_v2", "gen_sds_shortterm_v3", "gen_sds_shortterm_v4", "gen_sds_longterm_v1", "gen_sds_longterm_v2", "gen_sds_longterm_v3", "gen_sds_longterm_v4")
+
+## What to include in Summary
+# Question:
+#   Which measurements should be used?
+#   -   Min and Max
 #   -   Mean
 #   -   N
 #   -   Standard Deviation
+# Important!! Only for variables which are NOT Categorical! for those we look into the individual percentage
 
-stargazer(data.frame(df_stigma_subset), type = "latex", summary = TRUE,summary.stat = c("n", "min", "max", "mean", "median", "sd"),  out = "summary-1.tex")
+# Creating a latex Table
+stargazer(data.frame(df_stigma_subset_wide), type = "latex", summary = TRUE,summary.stat = c("n", "min", "max", "mean", "median", "sd"),  out = "summary-1.tex", digits=2)
 
+# Calculate the percentages for each factor in these Variables!
+Gender <- (as.data.frame(table(df_stigma_subset_wide$SD100)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
+Age <- (as.data.frame(table(df_stigma_subset_wide$gen_alter)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
+State <- (as.data.frame(table(df_stigma_subset_wide$gen_bund)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
+School <- (as.data.frame(table(df_stigma_subset_wide$gen_schule_q)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
+Migration <- (as.data.frame(table(df_stigma_subset_wide$gen_herkunft)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
+Politics <- (as.data.frame(table(df_stigma_subset_wide$gen_politik)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
+Vaccine <- (as.data.frame(table(df_stigma_subset_wide$gen_impfung)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
 
-d <- (as.data.frame(table(df_stigma_subset$SD100)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
-f <- (as.data.frame(table(df_stigma_subset$gen_alter)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
-e <- (as.data.frame(table(df_stigma_subset$gen_bund)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
-g <- (as.data.frame(table(df_stigma_subset$gen_schule_q)) %>% rename(Count=1,Freq=2) %>% mutate(Perc=100*Freq/sum(Freq)))
+# Combining all rows to a data set
+df_cat <- bind_rows(Gender, Age, State, School, Migration, Politics, Vaccine)
 
-df <- bind_rows(d, f, e, g)
-
-stargazer(data.frame(df), type = "latex", 
+stargazer(data.frame(df_cat), type = "latex", 
        summary = FALSE,
        title = "Quotation Table",
        label="tab4",
-       covariate.labels = c("", "Label", "Frequency","Percentages"))
+       covariate.labels = c("", "Label", "Frequency","Percentages"),
+       digits = 1)
        #dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
        #table.placement = "H",
        #column.labels = c("Count", "Frequency", "Percentatage"))
