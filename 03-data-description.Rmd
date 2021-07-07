@@ -334,7 +334,7 @@ loadings.sds.promax.long <- melt(loadings.sds.promax, id="id",
                    variable.name="Factor", value.name="Loading")
 
 
-ggplot(loadings.sds.promax.long, aes(id, abs(Loading), fill=Loading)) + 
+plot_factor1 <- ggplot(loadings.sds.promax.long, aes(x=factor(id), abs(Loading), fill=Loading)) + 
   facet_wrap(~ Factor, nrow=1) + #place the factors in separate facets
   geom_bar(stat="identity") + #make the bars
   coord_flip() + #flip the axes so the test names can be horizontal  
@@ -343,8 +343,13 @@ ggplot(loadings.sds.promax.long, aes(id, abs(Loading), fill=Loading)) +
                        high = "blue", mid = "white", low = "red", 
                        midpoint=0, guide=F) +
   ylab("Loading Strength") + #improve y-axis label
-  theme_bw(base_size=10)
+  xlab("Social DIstance Scale Questions") +
+  scale_x_discrete(labels = c('Neighbour', 'Marriage', 'Work', 'Food', 'Meeting', 'Child Care')) +
+  #scale_y_continuous(labels =c("Neighbour", "Marriage", "Work", "Food", "Meeting", "Child Care")) +
+  theme_minimal(base_size=10)
 
+print(plot_factor1)
+ggsave(filename = "factorsds.pdf", width = 14, height = 10, dpi = 300, units = "cm")
 ```
 
 
@@ -683,7 +688,7 @@ loadings.promax.long <- melt(loadings.promax, id="id",
                    variable.name="Factor", value.name="Loading")
 
 
-ggplot(loadings.promax.long, aes(id, abs(Loading), fill=Loading)) + 
+plot_factor2 <- ggplot(loadings.promax.long, aes(x = factor(id), abs(Loading), fill=Loading)) + 
   facet_wrap(~ Factor, nrow=1) + #place the factors in separate facets
   geom_bar(stat="identity") + #make the bars
   coord_flip() + #flip the axes so the test names can be horizontal  
@@ -692,7 +697,12 @@ ggplot(loadings.promax.long, aes(id, abs(Loading), fill=Loading)) +
                        high = "blue", mid = "white", low = "red", 
                        midpoint=0, guide=F) +
   ylab("Loading Strength") + #improve y-axis label
-  theme_bw(base_size=10)
+  xlab("Different Restrictions") +
+  scale_x_discrete(labels = c('Ban In-Person Schools', 'Ban Private Parties', 'Ban Theatre & Cinema', 'Ban Sports Facilities', 'Limit Social Contact', 'Ban Private Travel', 'Ban Fans at Sport Events', 'Ban Bars & Clubs', 'No Restrictions')) +
+  theme_minimal(base_size=10)
+
+print(plot_factor2)
+ggsave(filename = "factorres.pdf", width = 14, height = 10, dpi = 300, units = "cm")
 ###########################################################################################################################################
 
 
