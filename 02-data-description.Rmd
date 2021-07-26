@@ -32,20 +32,20 @@ df_stigma_long <- read_csv("df_stigma_long.csv")
 
 ```{r descriptive social demo, include = FALSE}
 
-### Summary 
+### Summary with sds long and sds short
 
-# soon subset of the data - only important variables should be included, such as age, sex etc.
+# soon subset of the data - only important variables should be included, such as age, sex etc. for short term
 df_stigma_subset_long <- df_stigma_long %>%
   select(gen_sds_shortterm, gen_herkunft, gen_politik, gen_situation, gen_mc_largegroups, gen_mc_smallgroups, gen_mc_bars, gen_mc_none, gen_impfung, SD100, gen_alter, gen_bund, gen_schule, gen_schule_q, vignr, id)
 
-# spread data set in long format, as we are only interested in the particpant Level for the summary
+# spread data set in long format, as we are only interested in the participant Level for the summary
 df_stigma_subset_wide <- spread(df_stigma_subset_long, vignr, gen_sds_shortterm)
 
-# soon subset of the data - only important variables should be included, such as age, sex etc.
+# soon subset of the data - only important variables should be included, such as age, sex etc. for long term
 df_stigma_subset_long2 <- df_stigma_long %>%
   select(gen_sds_longterm, gen_herkunft, gen_politik, gen_situation, gen_mc_largegroups, gen_mc_smallgroups, gen_mc_bars, gen_mc_none, gen_impfung, SD100, gen_alter, gen_bund, gen_schule, gen_schule_q, vignr, id)
 
-# spread data set in long format, as we are only interested in the particpant Level for the summary
+# spread data set in long format, as we are only interested in the participant Level for the summary
 df_stigma_subset_wide2 <- spread(df_stigma_subset_long2, vignr, gen_sds_longterm)
 
 # Combining both data sets 
@@ -109,10 +109,9 @@ hist(df_stigma_long$SDS600)
 ### Interpretation
 
 # we see spikes at 1, 2, 3 and 4 as predicted
-# The index variable including all 4 Variables has a similar look as a normal distributon, however, 1 is much higher than the other values.
+# The index variable including all 4 Variables has a similar look as a normal distribution, however, 1 is much higher than the other values. Which did not show, when Florian tried it. 
 # This is similar to the other index variables and the individual variables
 
-# Nochmal nachfragen
 ```
 
 ```{r Vignette Differences}
@@ -137,7 +136,6 @@ df.test %>%
 
 # the mean of the individual Vignettes are quite similar and therefore should not be a problem
 
-# Nochmal nachfragen
 ```
 
 ###########################################################################################################################################
@@ -151,20 +149,23 @@ df.test %>%
 
 ```{r Factor analysis - Social Distance Scale}
 
+# Subset data set
+
 stigma.sds <- df_stigma_long %>%
   select(SDS100, SDS200, SDS300, SDS400, SDS500, SDS600)
 
 ### Factor Analysis
+
 stigma.sds <- na.omit(stigma.sds)
 stigma.sds.fa <- factanal(stigma.sds, factors = 2)
 
 
 ### Interpretation the results
 
-apply(stigma.sds.fa$loadings^2,1,sum) # communality (should be high)
-1 - apply(stigma.sds.fa$loadings^2,1,sum) # uniquness (should be low)
+apply(stigma.sds.fa$loadings^2,1,sum) # commonality (should be high)
+1 - apply(stigma.sds.fa$loadings^2,1,sum) # uniqueness (should be low)
 
-# factors are worth keeping, as thir SS loadings are greater than 1 (Kaiser's rule)
+# factors are worth keeping, as their SS loadings are greater than 1 (Kaiser's rule)
 
 
 ### Residual Matrix
@@ -235,13 +236,13 @@ abline(h = 0, v = 0)
 ### Interpretation:
 
 # Explanation of rotation: 
-   #  The purpose of a rotation is to produce factors with a mix of high and low loadings and few moderate-sized loadings. The idea is to give meaning to the    
-   #  factors, which helps interpret them. From a mathematical viewpoint, there is no difference between a rotated and unrotated matrix. The fitted model is the 
-   #  same, the uniquenesses are the same, and the proportion of variance explained is the same.
+   #  The purpose of a rotation is to produce factors with a mix of high and low loadings and few moderate-sized loadings. The idea is to give meaning to the 
+   #  factors, which helps interpret them. From a mathematical viewpoint, there is no difference between a rotated and unrotated matrix. The fitted model is the
+   #  same, the uniqueness are the same, and the proportion of variance explained is the same.
 
 
 # SDS100 & SDS200 differ from the others, possibly because they are more long term as the others. Contrary to the believe, that the work aspect could also be long term, it might be, that it is not viewed as so long term
-# Concluding, it would make sense to combine SDS100 & SDS200 in one index Variable and the others in one.
+# Concluding, it would make sense to combine SDS100 & SDS200 in one index Variable and the rest in one as well.
 ```
 
 ```{r Factor analysis - Social Distance Scale - graph}
@@ -343,8 +344,8 @@ plot_factor1 <- ggplot(loadings.sds.promax.long, aes(x=factor(id), abs(Loading),
                        high = "blue", mid = "white", low = "red", 
                        midpoint=0, guide=F) +
   ylab("Loading Strength") + #improve y-axis label
-  xlab("Social DIstance Scale Questions") +
-  scale_x_discrete(labels = c('Neighbour', 'Marriage', 'Work', 'Food', 'Meeting', 'Child Care')) +
+  xlab("Social Distance Scale Questions") +
+  scale_x_discrete(labels = c('Neighbour', 'In-Laws', 'Work', 'Food', 'Meeting', 'Child Care')) +
   #scale_y_continuous(labels =c("Neighbour", "Marriage", "Work", "Food", "Meeting", "Child Care")) +
   theme_minimal(base_size=10)
 
@@ -353,7 +354,7 @@ ggsave(filename = "factorsds.pdf", width = 14, height = 10, dpi = 300, units = "
 ```
 
 
-```{r Factor analysis - Einstellung Lage - FA}
+```{r Factor analysis - Attitude Pandemic - FA}
 
 stigma.ec <- df_stigma_long %>%
   select(EC19100, EC19200, EC19300, EC19400)
@@ -365,7 +366,7 @@ fa.parallel(stigma.ec, fm = "minres", fa = "fa")
 
 # Interpretation: 
 
-# After inspection of the graph is clear, that the variables only load on one factor.
+# After inspection of the graph it is clear that the variables only load on one factor.
 
 stigma.ec <- na.omit(stigma.ec)
 stigma.ec.fa <- factanal(stigma.ec, factors = 1)
@@ -375,7 +376,7 @@ stigma.ec.fa <- factanal(stigma.ec, factors = 1)
 apply(stigma.ec.fa$loadings^2,1,sum) # communality (should be high)
 1 - apply(stigma.ec.fa$loadings^2,1,sum) # uniquness (should be low)
 
-# factors are worth keeping, as thir SS loadings are greater than 1 (Kaiser's rule)
+# factors are worth keeping, as their SS loadings are greater than 1 (Kaiser's rule)
 
 
 ### Residual Matrix
@@ -445,21 +446,21 @@ abline(h = 0, v = 0)
 ### Interpretation:
 
 # Explanation of rotation: 
-   #  The purpose of a rotation is to produce factors with a mix of high and low loadings and few moderate-sized loadings. The idea is to give meaning to the    
-   #  factors, which helps interpret them. From a mathematical viewpoint, there is no difference between a rotated and unrotated matrix. The fitted model is the 
+   #  The purpose of a rotation is to produce factors with a mix of high and low loadings and few moderate-sized loadings. The idea is to give meaning to the   
+   #  factors, which helps interpret them. From a mathematical viewpoint, there is no difference between a rotated and unrotated matrix. The fitted model is the
    #  same, the uniquenesses are the same, and the proportion of variance explained is the same.
 
 # Interpretation:
-   #  In the graph we see, that EC19100 and EC10400 have similar values. EC19200 and EC19300 have similar values. Which makes sense, because 100 and 400 ask after
-   #  financial situations and the others after health. In general, they have all similar values.
+   #  In the graph we see that EC19100 and EC10400 have similar values. EC19200 and EC19300 have similar values. Which makes sense, because 100 and 400 ask 
+   #  after financial situations and the others after health. In general, they have all similar values.
    #  However, the initial factor analysis showed, that all variables only load on one factor, which is why, I am only going to create one Index Variable.
 
 ```
 
 
-```{r Factor analysis - Einstellungen Lage - ggplot2}
+```{r Factor analysis - Attitudes towards the pandemic - ggplot2}
 
-## Original fa - Einstellungen Lage
+## Original fa - Attitude towards the pandemic
 
 str(stigma.ec.fa$loadings)
 class(stigma.ec.fa$loadings)
@@ -485,7 +486,7 @@ ggplot(loadings.ec.long, aes(id, abs(Loading), fill=Loading)) +
 
 ###########################################################################################################################################
 
-## No Rotation fa - Einstellungen Lage
+## No Rotation fa - Attitude towards the pandemic
 
 stigma.ec.fa.none <- factanal(stigma.ec, factors = 1, rotation = "none")
 
@@ -510,7 +511,7 @@ ggplot(loadings.ec.none.long, aes(id, abs(Loading), fill=Loading)) +
 
 ###########################################################################################################################################
 
-## Varimax fa - Einstellungen Lage
+## Varimax fa - Attitude towards the pandemic
 
 stigma.ec.fa.varimax <- factanal(stigma.ec, factors = 1, rotation = "varimax")
 
@@ -535,7 +536,7 @@ ggplot(loadings.ec.varimax.long, aes(id, abs(Loading), fill=Loading)) +
 
 ###########################################################################################################################################
 
-## Promax fa - Einstellungen Lage
+## Promax fa - Attitude towards the pandemic
 
 stigma.ec.fa.promax <- factanal(stigma.ec, factors = 1, rotation = "promax")
 
@@ -561,7 +562,7 @@ ggplot(loadings.ec.promax.long, aes(id, abs(Loading), fill=Loading)) +
 ```
 
 
-```{r Factor analysis - Maßnahmen Einstellungen}
+```{r Factor analysis - Attitude towards restrictions}
 
 stigma.mc <- df_stigma_long %>%
   select(MC19100_1, MC19100_2, MC19100_3, MC19100_4, MC19100_5, MC19100_6, MC19100_7, MC19100_8)
@@ -593,7 +594,7 @@ round(S - Sigma, 6)
 ```{r Factor analysis}
 ### Interpretation Factors
 
-## original fa - graph
+## original fa - Attitude towards restrictions
 
 str(stigma.mc.fa$loadings)
 class(stigma.mc.fa$loadings)
@@ -619,7 +620,7 @@ ggplot(loadings.og.long, aes(id, abs(Loading), fill=Loading)) +
 
 ###########################################################################################################################################
 
-## no rotation fa - graph
+## no rotation fa - Attitude towards restrictions
 
 stigma.mc.fa.none <- factanal(stigma.mc, factors = 3, rotation = "none")
 
@@ -646,7 +647,7 @@ ggplot(loadings.none.long, aes(id, abs(Loading), fill=Loading)) +
   theme_bw(base_size=10)
 ###########################################################################################################################################
 
-## varimax fa - graph
+## varimax fa - Attitude towards restrictions
 
 stigma.mc.fa.varimax <- factanal(stigma.mc, factors = 3, rotation = "varimax")
 
@@ -673,7 +674,7 @@ ggplot(loadings.varimax.long, aes(id, abs(Loading), fill=Loading)) +
   theme_bw(base_size=10)
 ###########################################################################################################################################
 
-## promax fa - graph
+## promax fa - Attitude towards restrictions
 
 stigma.mc.fa.promax <- factanal(stigma.mc, factors = 3, rotation = "promax")
  
@@ -697,7 +698,7 @@ plot_factor2 <- ggplot(loadings.promax.long, aes(x = factor(id), abs(Loading), f
                        high = "blue", mid = "white", low = "red", 
                        midpoint=0, guide=F) +
   ylab("Loading Strength") + #improve y-axis label
-  xlab("Different Restrictions") +
+  xlab("Different Restrictions to limit the Spread of COVID-19") +
   scale_x_discrete(labels = c('Ban In-Person Schools', 'Ban Private Parties', 'Ban Theatre & Cinema', 'Ban Sports Facilities', 'Limit Social Contact', 'Ban Private Travel', 'Ban Fans at Sport Events', 'Ban Bars & Clubs', 'No Restrictions')) +
   theme_minimal(base_size=10)
 
@@ -709,8 +710,8 @@ ggsave(filename = "factorres.pdf", width = 14, height = 10, dpi = 300, units = "
 ### Interpretation:
 
 # Explanation of rotation: 
-   #  The purpose of a rotation is to produce factors with a mix of high and low loadings and few moderate-sized loadings. The idea is to give meaning to the    
-   #  factors, which helps interpret them. From a mathematical viewpoint, there is no difference between a rotated and unrotated matrix. The fitted model is the 
+   #  The purpose of a rotation is to produce factors with a mix of high and low loadings and few moderate-sized loadings. The idea is to give meaning to the   
+   #  factors, which helps interpret them. From a mathematical viewpoint, there is no difference between a rotated and unrotated matrix. The fitted model is the
    #  same, the uniquenesses are the same, and the proportion of variance explained is the same.
 
 # Interpretation:
@@ -759,14 +760,14 @@ ggplot(df_stigma_long, aes(x = gen_sds, y = gen_infektion_v)) +
 
 ## Interpretation: 
 
-# Es scheint kein Vignetten Effekt vorzuliegen, anhand der descriptiven Statistik
+# There seems to be no vignette effect, based on descriptive statistics
 ```
 
-```{r Boxplots Alter}
+```{r Boxplots Age}
 
-### Boxplot to look into differences 
+### Boxplot to look into differences of age vignette
 
-## Alter 
+## Age Vignette
 
 ggplot(df_stigma_long, aes(y = gen_sds)) +
   geom_boxplot()  +
@@ -782,9 +783,11 @@ ggplot(df_stigma_long, aes(y = gen_sds_shortterm)) +
 
 ```
 
-```{r Boxplots Geschlecht}
+```{r Boxplots Gender}
 
-## Geschlecht
+### Boxplot to look into differences of gender vignette
+
+## Gender Vignette
 
 ggplot(df_stigma_long, aes(y = gen_sds)) +
   geom_boxplot()  +
@@ -799,8 +802,11 @@ ggplot(df_stigma_long, aes(y = gen_sds_shortterm)) +
   facet_wrap(~gen_sex_v)
 ```
 
-```{r Boxplots Ethnie}
-##  Ethnie
+```{r Boxplots Ethnicity}
+
+### Boxplot to look into differences of ethnicity vignette
+
+##  Ethnicity Vignette
 
 ggplot(df_stigma_long, aes(y = gen_sds)) +
   geom_boxplot()  +
@@ -815,8 +821,11 @@ ggplot(df_stigma_long, aes(y = gen_sds_shortterm)) +
   facet_wrap(~gen_ethnie_v)
 ```
 
-```{r Boxplots Beruf}
-## Beruf
+```{r Boxplots occupation}
+
+### Boxplot to look into differences of occupation vignette
+
+## occupation
 
 ggplot(df_stigma_long, aes(y = gen_sds)) +
   geom_boxplot()  +
@@ -833,6 +842,8 @@ ggplot(df_stigma_long, aes(y = gen_sds_shortterm)) +
 
 ```{r Boxplots Essential}
 
+### Boxplot to look into differences of essential workers
+
 ## Essential
 
 ggplot(df_stigma_long, aes(y = gen_sds)) +
@@ -848,9 +859,11 @@ ggplot(df_stigma_long, aes(y = gen_sds_shortterm)) +
   facet_wrap(~gen_essential_v)
 ```
 
-```{r Boxplots Infektion}
+```{r Boxplots Infection}
 
-## Infektion
+### Boxplot to look into differences of infection vignette
+
+## Infection
 
 ggplot(df_stigma_long, aes(y = gen_sds)) +
   geom_boxplot()  +
@@ -867,7 +880,7 @@ ggplot(df_stigma_long, aes(y = gen_sds_shortterm)) +
 
 
 
-```{r Hypothesis 2 - Ethnie}
+```{r Hypothesis 2 - Ethnicity}
 
 ## Hypothesis 2a and 2b
 
@@ -886,7 +899,7 @@ ggplot(df_stigma_long, aes(x = gen_ethnie_v, y = gen_sds_shortterm,  alpha = 0.5
 
 ```
 
-```{r Hypothesis 3 - Workfield}
+```{r Hypothesis 3 - Occupation}
 
 ## Hypothesis 3 - normal difference between all three 
 
@@ -920,9 +933,9 @@ ggplot(df_stigma_long, aes(x = gen_essential_v, y = gen_sds_shortterm,  alpha = 
 
 
 
-```{r Hypothesis 4 - Alter}
+```{r Hypothesis 4 - Age}
 
-## Hypothesis 4 - Alter 
+## Hypothesis 4 - Age
 
 ggplot(df_stigma_long, aes(x = gen_alter_v, y = gen_sds,  alpha = 0.5)) +
   geom_jitter()  +
@@ -938,9 +951,9 @@ ggplot(df_stigma_long, aes(x = gen_alter_v, y = gen_sds_shortterm,  alpha = 0.5)
 
 ```
 
-```{r Kontrollvariable Geschlecht Vignette}
+```{r Control Variable Gender Vignette}
 
-## Geschlecht Vignette
+## Gender Vignette
 
 ggplot(df_stigma_long, aes(x = gen_sex_v, y = gen_sds,  alpha = 0.5)) +
   geom_jitter()  +
@@ -958,9 +971,9 @@ ggplot(df_stigma_long, aes(x = gen_sex_v, y = gen_sds_shortterm,  alpha = 0.5)) 
 
 
 
-```{r Kontrollvariable Einstellung derzeitige Lage}
+```{r Control Variable Attitudes towards the pandemic}
 
-## Einstellung derzeitige Lage
+## Attitudes towards the pandemic
 
 ggplot(df_stigma_long, aes(x = gen_situation, y = gen_sds,  alpha = 0.5)) +
   geom_jitter()  +
@@ -977,9 +990,9 @@ ggplot(df_stigma_long, aes(x = gen_situation, y = gen_sds_shortterm,  alpha = 0.
 ```
 
 
-```{r Kontrollvariable Politische Einstellung}
+```{r Control Variable Attitudes towards restrictions}
 
-## Politische Einstellung
+## Attitudes towards restrictions
 
 ggplot(df_stigma_long, aes(x = gen_politik, y = gen_sds,  alpha = 0.5)) +
   geom_jitter()  +
@@ -995,9 +1008,9 @@ ggplot(df_stigma_long, aes(x = gen_politik, y = gen_sds_shortterm,  alpha = 0.5)
 
 ```
 
-```{r Kontrollvariable Politische Einstellung}
+```{r Control Variable Political Identification}
 
-## Politische Einstellung
+## Political Identification
 
 ggplot(df_stigma_long, aes(x = gen_herkunft, y = gen_sds,  alpha = 0.5)) +
   geom_jitter()  +

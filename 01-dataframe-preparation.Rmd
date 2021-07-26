@@ -18,7 +18,7 @@ library(naniar)
 ## Aufbereitung
 
 
-```{r Datensatz reinladen, include = FALSE}
+```{r load data set, include = FALSE}
 
 df_origin <- read_csv("stigma-origin-df.csv")
 df_origin_nolab <- read_csv("stigma-origin-df-nolabel.csv")
@@ -33,9 +33,9 @@ head(df_origin_nolab)
 ```
 
 
-```{r Aufbereitung df_origin_nolab, echo=FALSE}
+```{r preparation df_origin_nolab, echo=FALSE}
 
-# select variables, which I need for the analysis.
+# select variables which I need for the analysis.
 
 df_nolab <- df_origin_nolab %>%
   select(lfdn, c_0003, c_0004, c_0005, c_0006, v_19, v_258, v_42, v_21, v_22, v_23, v_24, v_25, v_28, v_30, v_31, v_32, v_33, v_34, v_35, v_37, v_38, v_39, v_36, v_153,v_154,v_155, v_156, v_157, v_158, v_181, v_182,v_183, v_184, v_185, v_186, v_187, v_188, v_189, v_190, v_191, v_192, v_193, v_194, v_195, v_196, v_197, v_198, v_177, v_180, v_178, v_179, v_11, v_12, v_13, v_14, v_15, v_16, v_86, v_87, v_88, v_17, v_248, v_199, v_250, v_246, dispcode, duration)
@@ -55,7 +55,7 @@ head(df_nolab)
 ##                                                                                                                                       ##
 ###########################################################################################################################################
 
-```{r Kontrolle v1 - v4, echo=FALSE}
+```{r control v1 - v4, echo=FALSE}
 
 # v1
 
@@ -91,7 +91,7 @@ hist(count4$n) # descriptive graph
 ```
 
 
-```{r Kontrolle zusammen, echo=FALSE}
+```{r control together, echo=FALSE}
 
 dftg <- df_nolab%>% 
   select(V100, V200, V300, V400)
@@ -116,41 +116,41 @@ hist(count5$n) # descriptive graph
 
 ###########################################################################################################################################
 
-### Geschlecht - SD100
+### Gender - SD100
 
 count(df_nolab, SD100)
 
-# Keine Missings vorhanden, da mit Quotierung gearbeitet wurde und man nicht überspringen konnte. 
+# No missings available because quoting was used, no skipping allowed. 
 
 ###########################################################################################################################################
 
 
-### Alter - SD200
+### Age - SD200
 
 count(df_nolab, SD200)
 
-# Keine Missings vorhanden, da mit Quotierung gearbeitet wurde und man nicht überspringen konnte. 
+# No missings available because quoting was used, no skipping allowed. 
 
 ###########################################################################################################################################
 
 
-### Alter - SD200 - gen_alter
+### Age - SD200 - gen_alter
 
-# 1 = 18-39 Jahre
-# 2 = 40-60 Jahre
-# 3 = 60+ Jahre
+# 1 = 18-39 years old
+# 2 = 40-60 years old
+# 3 = 60+ years old
 
 df_nolab <-  df_nolab %>%
   mutate(gen_alter = ifelse(SD200 < 40, 1,
                             ifelse(SD200 >=40 & SD200 <= 60, 2,
                                    ifelse(SD200 > 60, 3, 99))))
 count(df_nolab, gen_alter)
-# Keine Missings vorhanden, da mit Quotierung gearbeitet wurde und man nicht überspringen konnte. 
+# No missings available because quoting was used, no skipping allowed.  
 
 ###########################################################################################################################################
 
 
-### bundesland - SD300 - gen_bund
+### state of Germany - SD300 - gen_bund
 
 # 1 = BaWü
 # 2 = Bayern
@@ -170,10 +170,11 @@ count(df_nolab, gen_alter)
 # 16 = Thüringen (ost)
 
 
-### bundesland - Ost/West
+### state of Germany - East/West
 
 # 1 = West
 # 0 = East
+
 df_nolab <-  df_nolab %>%
   mutate(gen_bund = ifelse(SD300 == 4, 0,
                                   ifelse(SD300 == 8, 0,
@@ -190,7 +191,7 @@ df_nolab <-  df_nolab %>%
 # 1 = lower secondary
 # 2 = higher secondary
 # 3 = no 
-# 99 = Missings (Other) Maybe look into them and address them accordingly
+# 99 = Missings (Other) 
 
 df_nolab <-  df_nolab %>%
   mutate(gen_schule = ifelse(SD400 >= 3 & SD400 <= 4, 1,
@@ -210,10 +211,10 @@ count(df_nolab, gen_schule)
 # new Variable: 
 
 # 1 = No Education
-# 2 = Hauptschulabschluss
-# 3 = Realschulabschluss
-# 4 = (Fach-)Abitur
-# 99 = Missings (Other) Maybe look into them and address them accordingly
+# 2 = Hauptschul Degree
+# 3 = Realschul Degree
+# 4 = (Fach-)Abitur/ High school diploma
+# 99 = Missings (Other), below address them accordingly
 
 df_nolab <-  df_nolab %>%
   mutate(gen_schule_q = ifelse(SD400 == 3 , 2,
@@ -232,17 +233,17 @@ count(df_nolab, gen_schule_q)
 ###########################################################################################################################################
 
 
-### Berufsausbildung SD500* - gen_beruf
+### Vocational training SD500* - gen_beruf
 
-# 1 = Beruflich-betriebliche Anlernzeit mit Abschlusszeugnis, aber keine Lehre 
-# 2 = Teilfacharbeiterabschluss 
-# 3 = Abgeschlossene Lehre 
-# 4 = (Berufs-) Fachschulabschluss 
-# 5 = Meister-, Techniker- oder gleichwertiger Fachschulabschluss 
-# 6 = Fachhochschulabschluss (auch Abschluss einer Ingenieurschule) 
-# 7 = Hochschulabschluss
-# 8 = Andere Abschluss
-# 9 = kein Abschluss
+# 1 = Vocational-in-company training period with final certificate, but no apprenticeship 
+# 2 = Partial skilled worker degree 
+# 3 = Completed apprenticeship 
+# 4 = (Vocational) technical college degree 
+# 5 = Master craftsman, technician or equivalent technical college degree 
+# 6 = University of applied sciences degree (also degree from a school of engineering) 
+# 7 = University degree
+# 8 = Other degree
+# 9 = No Degree
 # 99 = Missing
 
 df_nolab <- df_nolab %>%
@@ -260,14 +261,14 @@ df_nolab <- df_nolab %>%
 ###########################################################################################################################################
 
 
-### Staatsangehörigkeit SD600 - gen_staat
+### Nationality SD600 - gen_staat
 
-# 1 = Deutsche
-# 2 = EU-Land
-# 3 = Non-EU-Land
-# 4 = Deutsch + EU-Land
-# 5 = Deutsch + Non-EU-Land
-# 6 = EU-Land + Non-EU-Land
+# 1 = German
+# 2 = EU-Country
+# 3 = Non-EU-Country
+# 4 = German + EU-Country
+# 5 = German + Non-EU-Country
+# 6 = EU-Country + Non-EU-Country
 # 99 = Missing (no answer)
 
 df_nolab <-  df_nolab %>%
@@ -282,10 +283,10 @@ df_nolab <-  df_nolab %>%
 ###########################################################################################################################################
 
 
-### Geburtsort Eltern SD700
+### Birthplace Eltern SD700
 
-# 1 = Ja (Ausland)
-# 2 = Nein (Nicht im Ausland)
+# 1 = Yes (Abroad)
+# 2 = No (Not Abroad)
 # 99 = Missing
 
 count(df_nolab, SD700)
@@ -295,10 +296,10 @@ df_nolab$SD700[df_nolab$SD700 == 0] <- 99
 ###########################################################################################################################################
 
 
-### Herkunft 
+### Heritage
 
-# 1 = Deutsch
-# 2 = Andere
+# 1 = German
+# 2 = Others
 # 99 = Missing
 
 df_nolab <- df_nolab %>%
@@ -307,48 +308,48 @@ df_nolab <- df_nolab %>%
                                       ifelse((gen_staat > 1) & (gen_staat < 7) & (SD700 == 2), 2, 
                                              ifelse((gen_staat == 99) & (SD700 == 1), 2, 99 )))))
 
-## Anmerkung: 
+## Note: 
 
-# Deutsche Staatsangehörigkeit X Geburtsort Eltern Missing = 5 Fälle --> unklar
-# Staatsangehörigkeit Missing X Geburtsort Eltern Außerhalb = 2 Fälle --> aufjedenfall migrationshintergund
-# Staatsangehörigkeit Missing X Geburtsort Eltern Deutschland = 13 Fälle --> unklar
-# Staatsangehörigkeit Missing X Geburtsort Eltern Missing = 1 Fälle --> unklar
+# German nationality X birthplace parents Missing = 5 cases --> unclear
+# nationality missing X place of birth parents outside = 2 cases --> in any case migrationshintergund
+# nationality missing X place of birth parents Germany = 13 cases --> unclear
+# nationality missing X place of birth parents missing = 1 cases --> unclear
  
 
-## Kontrolle: 
+## control: 
 
 table(df_nolab$gen_staat, df_nolab$SD700)
 count(df_nolab, gen_herkunft)
 
 ###########################################################################################################################################
 
-### Einstellung der Lage EC19100 - EC19400
+### Attitudes towards the pandemic EC19100 - EC19400
 
-## Einstellung: Eigene Finanzielle Situation - EC19100
+## Attitude: Own financial situation - EC19100
 
 df_nolab$EC19100[df_nolab$EC19100 == 0] <- 99
 count(df_nolab, EC19100)
 
-## Einstellung: Eigene Gesundheit - EC19200
+## Attitude: Own Health - EC19200
 
 df_nolab$EC19200[df_nolab$EC19200 == 0] <- 99
 count(df_nolab, EC19200)
 
-## Einstellung: Gesundheit Angehöriger - EC19300
+## Attitude: Health of Relatives - EC19300
 
 df_nolab$EC19300[df_nolab$EC19300 == 0] <- 99
 count(df_nolab, EC19300)
 
-## Einstellung: Allgemeine Wirtschaftliche Lage - EC19400
+## Attitude: General Financial Situation - EC19400
 
 df_nolab$EC19400[df_nolab$EC19400 == 0] <- 99
 count(df_nolab, EC19400)
 
 ###########################################################################################################################################
 
-### Einstellung Maßnahmen MC19100_1 - MC19100_9
+### Attitudes towards Restrictions MC19100_1 - MC19100_9
 
-## Einstellung Maßnahmen: Schließung von Schulen und Kindergärten - MC19100_1
+## Attitudes towards Restrictions: Closing Kindergarten and schools - MC19100_1
 
 df_nolab <- df_nolab %>%
   mutate(MC19100_1= ifelse(MC19100_1 == 0 & MC19100_2 == 0 & MC19100_3 == 0 & MC19100_4 == 0 & MC19100_5 == 0 & MC19100_6 == 0 & MC19100_7 == 0 & MC19100_8 == 0 & MC19100_9 == 0,99, 
@@ -365,14 +366,14 @@ df_nolab$MC19100_9[df_nolab$MC19100_1 == 99] <- 99
 
 ###########################################################################################################################################
 
-### Einhaltung Maßnahmen - MC19200
+### Compliance to measures - MC19200
 
 df_nolab$MC19200[df_nolab$MC19200 == 0] <- 99
 count(df_nolab, MC19200)
 
 ###########################################################################################################################################
 
-### Infektion - IC19100
+### Infection - IC19100
 
 df_nolab$IC19100[df_nolab$IC19100 == 0] <- 99
 count(df_nolab, IC19100)
@@ -380,7 +381,7 @@ count(df_nolab, IC19100)
 ###########################################################################################################################################
 
 
-### Bereits geimpft - IC19200
+### Already vaccinated - IC19200
 
 df_nolab$IC19200[df_nolab$IC19200 == 0] <- 99
 count(df_nolab, IC19200)
@@ -388,7 +389,7 @@ count(df_nolab, IC19200)
 ###########################################################################################################################################
 
 
-### Impfbereitschaft - IC19300
+### Willingness to get vaccinated - IC19300
 
 df_nolab$IC19300[df_nolab$IC19300 == 0] <- 99
 count(df_nolab, IC19300)
@@ -396,12 +397,12 @@ count(df_nolab, IC19300)
 ###########################################################################################################################################
 
 
-### Impfung
+### Vaccine
 
-#neue Variable:
+# new Variable:
 
-# 1 = Impfbereit (inklusiv bereits geimpfte und zukünftig)
-# 2 = nicht Impfbereit 
+# 1 = Willingness to get vaccinated  (including already vaccinated and future)
+# 2 = not Willingness to get vaccinated 
 
 df_nolab <- df_nolab %>%
   mutate(gen_impfung = ifelse((IC19200 == 1), 1,
@@ -414,7 +415,7 @@ df_nolab <- df_nolab %>%
 ###########################################################################################################################################
 
 
-### Politik - Originalvariable - PE100
+### Politic - Original variable - PE100
 
 df_nolab$PE100[df_nolab$PE100 == 0] <- 99
 count(df_nolab, PE100)
@@ -422,13 +423,13 @@ count(df_nolab, PE100)
 ###########################################################################################################################################
 
                              
-### Politik
+### Politics
 
-# neue Variable: Rechts - Mitte - Links
+# new variable: Right leaning - middle - left leaning
 
-# 1 = Links
-# 2 = Mitte
-# 3 = Rechts
+# 1 = Left
+# 2 = Middle
+# 3 = Right
 # 99 = Missing
 
 df_nolab <- df_nolab %>%
@@ -440,10 +441,10 @@ df_nolab <- df_nolab %>%
 ###########################################################################################################################################
 
 
-### Durchführung Umfrage - completed
+### Implementation survey - completed
 
-# 1 = Keine Pause
-# 0 = Pause
+# 1 = No Breaks
+# 0 = Breaks
 
 df_nolab <- df_nolab %>%
   mutate(completed = ifelse(completed == 31, 1, 0))
@@ -796,7 +797,7 @@ df_stigma_long <- df_stigma_long %>%
 # df_stigma_long$gen_sds
 
 
-## Second Index Variable - including SDS100 & SDS200 questions
+## Second Index Variable - including SDS100 & SDS200 questions - Long Term SD
 
 df_stigma_long <- df_stigma_long %>%
   mutate(gen_sds_longterm = (SDS100 + SDS200)/2) %>%
@@ -805,7 +806,7 @@ df_stigma_long <- df_stigma_long %>%
 # df_stigma_long$gen_sds_longterm
 
 
-## Third Index Variable - including SDS300, SDS400, SDS500 & SDS600 questions
+## Third Index Variable - including SDS300, SDS400, SDS500 & SDS600 questions - Short Term SD
 
 df_stigma_long <- df_stigma_long %>%
   mutate(gen_sds_shortterm = (SDS300 + SDS400 + SDS500 + SDS600)/4) %>%
@@ -822,10 +823,10 @@ df_stigma_long <- df_stigma_long %>%
 
 ## Explanation 
 
-# I am going to do 3 Index Variables.
-#   1. One including all of the 4 questions
+# I am going to create 1 Index Variable
+#   Including all of the 4 questions
 
-## First Index Variable - including all 4 questions
+## Index Variable - including all 4 questions
 
 df_stigma_long <- df_stigma_long %>%
   mutate(gen_situation = (EC19100 + EC19200 + EC19300 + EC19400)/4) %>%
@@ -854,6 +855,7 @@ df_stigma_long <- df_stigma_long %>%
 #      -->  According to the factor analysis, closing bars and clubs is loading on one factor. 
 #   4. One including MC19100_9
 #      -->  MC19100_9 was exclusiv in the survey, which is the reason, why it does not make sense to include it, into the factor analysis. 
+#      -->  not used in models due to heterogeneity
 
 ## First Index Variable - including MC19100_1, MC19100_2, MC19100_4 & MC19100_7
 

@@ -103,7 +103,7 @@ df_stigma_long$gen_alter <- relevel(df_stigma_long$gen_alter, ref = 1)
 
 ```{r Cluster Robust Standard Error Test, include = FALSE}
 
-## Random Intercept Model - SDS Shortterm
+## Random Intercept Model - SD Short term
 
 ranin_short_m1 <-  lmer(gen_sds_shortterm ~ 1 + (1 | id), data = df_stigma_long)
 summary(ranin_short_m1)
@@ -113,14 +113,14 @@ summary(ranin_short_m1)
 
 ranin_short_m2 <-  lmer(gen_sds_shortterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + (1 | id), data = df_stigma_long)
 ranin_short_m3 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + (1 | id), data = df_stigma_long)
-ranin_short_m4 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter  + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + (1 | id), data = df_stigma_long)
-ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter  + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+ranin_short_m4 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter  + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_impfung + (1 | id), data = df_stigma_long)
+ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter  + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
 
 ```
 
 ```{r Cluster Robust Standard Error Test, include = FALSE}
 
-## Random Intercept Model - SDS LongTerm
+## Random Intercept Model - SD LongTerm
 
 ranin_long_m1 <-  lmer(gen_sds_longterm ~ 1 + (1 | id), data = df_stigma_long)
 summary(ranin_long_m1)
@@ -130,8 +130,8 @@ summary(ranin_long_m1)
 
 ranin_long_m2 <-  lmer(gen_sds_longterm ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + (1 | id), data = df_stigma_long)
 ranin_long_m3 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + (1 | id), data = df_stigma_long)
-ranin_long_m4 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + (1 | id), data = df_stigma_long)
-ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+ranin_long_m4 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_impfung + (1 | id), data = df_stigma_long)
+ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
 
 ```
 
@@ -144,7 +144,7 @@ ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_b
        #covariate.labels = c("Infektion", "Female", "Age","Age Squared", "Schulausbildung", "Staatsangehörigkeit", "Politische Einstellung"), 
        #dep.var.labels   = c("Social Distance", "Short Term - Social Distance", "Long Term - Social Distance"), 
        #table.placement = "H",
-       column.labels = c("M1", "M2", "M3"),
+       column.labels = c("M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10"),
        model.numbers = FALSE,
        header=FALSE, 
        font.size= "footnotesize", 
@@ -170,11 +170,11 @@ ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_b
 
 # 1.1 Build Linear Model DV: SDS Short Term
 
-ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars  + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
 
 # 1.2 Build Linear Model DV: SDS Long Term
 
-ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
 
 ## 2. Plot Model
 
@@ -202,10 +202,11 @@ plot_hyp1 <- pred_h1 %>%
       #xlab("Infection Status") +
       #ylab("Predicted Average Estimates") + 
       scale_x_discrete(labels = c('Currently Infected','Former Infected','Not Infected')) +
-      scale_color_manual(values=c("#E69F00", "#56B4E9")) +
+      scale_color_manual(name = "Social Distance", values=c("#E69F00", "#56B4E9"), labels = c("Long Term", "Short Term")) +
       #ggtitle( paste("Predicted Infection Status")) +
-		  labs( x = "Infection Status", y = "Predicted Average Estimates for SDS") +
+		  labs( x = "Infection Status", y = "Predicted Average Estimates for Social Distance (SD)") +
       theme_minimal()+
+      #theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
       theme(
       axis.title = element_text(family = 'Times'),
       axis.text.x = element_markdown(family = 'Times'),
@@ -216,9 +217,8 @@ plot_hyp1 <- pred_h1 %>%
 print(plot_hyp1)
 ggsave(filename = "hyp1.pdf", width = 14, height = 10, dpi = 300, units = "cm")
 
-lm <- lm(gen_sds_shortterm ~ SD100 + gen_bund + gen_mc_largegroups + gen_alter, data =  df_stigma_long)
-summary(lm)
 ```
+
 ### Predicted Estimate Graph - Hypothesis 2
 
 ```{r Hypothesis 2 - predicted Estimates}
@@ -231,11 +231,11 @@ summary(lm)
 
 # 1.1 Build Linear Model DV: SDS Short Term
 
-ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
 
 # 1.2 Build Linear Model DV: SDS Long Term
 
-ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
 
 ## 2. Plot Model
 
@@ -254,7 +254,7 @@ plot_hyp2 <- pred_long_h2 %>%
       geom_point() +
       geom_line() + 
       xlab("Infection Status") +
-      ylab("Predicted Average Estimates") + 
+      ylab("Predicted Average Estimates for Long Term SD") + 
       scale_x_discrete(labels = c('Currently Infected','Former Infected','Not Infected')) +
       scale_color_manual(name = "Ethnicity", values=c("#999999", "#E69F00", "#56B4E9"), labels = c("German", "Turkish", "Asian")) +
       theme_minimal() +
@@ -282,11 +282,11 @@ ggsave(filename = "hyp2.pdf", width = 14, height = 10, dpi = 300, units = "cm")
 
 # 1.1 Build Linear Model DV: SDS Short Term
 
-ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
 
 # 1.2 Build Linear Model DV: SDS Long Term
 
-ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
 
 ## 2. Plot Model
 
@@ -298,8 +298,8 @@ pred_long_h3 <- ggpredict(ranin_long_m5, terms = c("gen_infektion_v", "gen_beruf
 # 2.2 Plot the data from 2.1 using ggplot2
 
 # create additional variables to make it easier to combine both graphs
-pred_long_h3$SDS <- "Long Term SDS"
-pred_short_h3$SDS <- "Short Term SDS"
+pred_long_h3$SDS <- "Long Term SD"
+pred_short_h3$SDS <- "Short Term SD"
 pred_long_h3$SDS <- as.factor(pred_long_h3$SDS)
 pred_short_h3$SDS <- as.factor(pred_short_h3$SDS)
 pred_h3 <- rbind(pred_long_h3, pred_short_h3)
@@ -312,7 +312,7 @@ plot_hyp3 <- pred_h3 %>%
       geom_line() + 
       facet_grid(.~SDS) +
       xlab("Infection Status") +
-      ylab("Predicted Average Estimates") + 
+      ylab("Predicted Average Estimates for SD") + 
       scale_x_discrete(labels = c('Currently Infected','Former Infected','Not Infected')) +
       #scale_color_discrete(name = "Occupation", labels = c("Administrative", "Nurse", "Cashier")) +
       scale_color_manual(name = "Occupation", values=c("#999999", "#E69F00", "#56B4E9"), labels = c("Administrative", "Nurse", "Cashier")) +
@@ -343,11 +343,11 @@ ggsave(filename = "hyp3.pdf", width = 14, height = 10, dpi = 300, units = "cm")
 
 # 1.1 Build Linear Model DV: SDS Short Term
 
-ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+ranin_short_m5 <-  lmer(gen_sds_shortterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
 
 # 1.2 Build Linear Model DV: SDS Long Term
 
-ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_mc_none + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
+ranin_long_m5 <-  lmer(gen_sds_longterm  ~ gen_infektion_v + gen_alter_v + gen_beruf_v + gen_sex_v + gen_ethnie_v + SD100 + gen_alter + gen_bund + gen_schule_q + gen_herkunft + gen_politik + gen_situation + gen_mc_largegroups + gen_mc_smallgroups + gen_mc_bars + gen_impfung + gen_infektion_v*gen_alter_v + gen_infektion_v*gen_beruf_v + gen_infektion_v*gen_ethnie_v + (1 | id), data = df_stigma_long)
 
 ## 2. Plot Model
 
@@ -366,9 +366,9 @@ plot_hyp4 <- pred_long_h2 %>%
       geom_point() +
       geom_line() + 
       xlab("Infection Status") +
-      ylab("Predicted Average Estimates") + 
+      ylab("Predicted Average Estimates for Long Term SD") + 
       scale_x_discrete(labels = c('Currently Infected','Former Infected','Not Infected')) +
-      scale_color_manual(name = "Age Cohort", values=c("#999999", "#E69F00", "#56B4E9"), labels = c("22 Years", "43 Years", "64 Years")) +
+      scale_color_manual(name = "Age", values=c("#999999", "#E69F00", "#56B4E9"), labels = c("22 Years", "43 Years", "64 Years")) +
       theme_minimal() +
       theme(
       axis.title = element_text(family = 'Times'),
